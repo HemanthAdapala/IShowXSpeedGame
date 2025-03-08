@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1639f2481fc45a46a1512c9a021ca8d, type: 3}
+  m_Name: GameConfig
+  m_EditorClassIdentifier: 
+  DifficultyLevels:
+  - MinScore: 0
+    MaxScore: 20
+    MinSpawnInterval: 1.5961624
+    MaxSpawnInterval: 3.2268898
+    CubeMoveSpeed: 0.5
+  - MinScore: 20
+    MaxScore: 40
+    MinSpawnInterval: 1.3521821
+    MaxSpawnInterval: 3.8040466
+    CubeMoveSpeed: 1
+  - MinScore: 60
+    MaxScore: 80
+    MinSpawnInterval: 1.7916783
+    MaxSpawnInterval: 2.2228646
+    CubeMoveSpeed: 2
+  - MinScore: 80
+    MaxScore: 100
+    MinSpawnInterval: 0.52281815
+    MaxSpawnInterval: 3.0233433
+    CubeMoveSpeed: 3
+  - MinScore: 100
+    MaxScore: 120
+    MinSpawnInterval: 1.291858
+    MaxSpawnInterval: 3.0639415
+    CubeMoveSpeed: 4
