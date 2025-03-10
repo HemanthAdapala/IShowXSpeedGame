@@ -56,5 +56,9 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "IShowXSpeed.sln"
+    "dotnet.defaultSolution": "IShowXSpeed.sln",
+    "cSpell.words": [
+        "Mathf",
+        "UGUI"
+    ]
 }

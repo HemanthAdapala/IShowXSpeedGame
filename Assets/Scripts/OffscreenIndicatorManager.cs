@@ -39,6 +39,7 @@ public class OffscreenIndicatorManager : MonoBehaviour
         if (indicator != null)
         {
             Destroy(indicator);
+            GameManager.Instance.DestroyCurrentTarget();
         }
     }
 }

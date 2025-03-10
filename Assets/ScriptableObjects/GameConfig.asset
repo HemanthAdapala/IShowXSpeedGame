@@ -15,18 +15,18 @@ MonoBehaviour:
   DifficultyLevels:
   - MinScore: 0
     MaxScore: 20
-    MinSpawnInterval: 1.5961624
-    MaxSpawnInterval: 3.2268898
-    CubeMoveSpeed: 0.5
+    MinSpawnInterval: 2.5
+    MaxSpawnInterval: 3
+    CubeMoveSpeed: 0.2
   - MinScore: 20
     MaxScore: 40
-    MinSpawnInterval: 1.3521821
-    MaxSpawnInterval: 3.8040466
+    MinSpawnInterval: 2
+    MaxSpawnInterval: 3
     CubeMoveSpeed: 1
   - MinScore: 60
     MaxScore: 80
-    MinSpawnInterval: 1.7916783
-    MaxSpawnInterval: 2.2228646
+    MinSpawnInterval: 2
+    MaxSpawnInterval: 3
     CubeMoveSpeed: 2
   - MinScore: 80
     MaxScore: 100

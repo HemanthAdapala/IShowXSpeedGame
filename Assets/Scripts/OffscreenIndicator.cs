@@ -77,7 +77,7 @@ public class OffscreenIndicator : MonoBehaviour
             return;
         }
 
-        // Get the target's position in viewport space
+        // Get the target's position in screen space
         Vector3 screenPos = MainCamera.WorldToViewportPoint(Target.position);
 
         // Check if the target is off-screen
@@ -88,15 +88,14 @@ public class OffscreenIndicator : MonoBehaviour
             // Enable the indicator
             Indicator.gameObject.SetActive(true);
 
-            // Calculate the direction from the target to the center of the screen
-            Vector3 screenCenter = new Vector3(0.5f, 0.5f, 0); // Center of the screen in viewport space
-            Vector3 direction = (screenCenter - screenPos).normalized;
+            // Corrected: Direction should be from screen center to target
+            Vector3 direction = (screenPos - new Vector3(0.5f, 0.5f, screenPos.z)).normalized;
 
-            // Calculate the indicator's rotation to point towards the target
+            // Corrected: Rotate the UI arrow towards the target
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            Indicator.rotation = Quaternion.Euler(0, 0, angle);
+            Indicator.rotation = Quaternion.Euler(0, 0, angle - 90); // Adjusting to align with UI forward axis
 
-            // Clamp the screen position to the edges
+            // Clamp position to screen edges with padding
             screenPos.x = Mathf.Clamp(screenPos.x, 0.05f, 0.95f);
             screenPos.y = Mathf.Clamp(screenPos.y, 0.05f, 0.95f);
 
@@ -118,4 +117,5 @@ public class OffscreenIndicator : MonoBehaviour
             Indicator.gameObject.SetActive(false);
         }
     }
+
 }
