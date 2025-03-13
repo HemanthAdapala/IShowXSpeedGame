@@ -59,6 +59,9 @@
     "dotnet.defaultSolution": "IShowXSpeed.sln",
     "cSpell.words": [
         "Mathf",
+        "Prefs",
+        "Prometeo",
         "UGUI"
-    ]
+    ],
+    "git.ignoreLimitWarning": true
 }
