@@ -1,4 +1,5 @@
 using System;
+using Managers;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -14,6 +15,7 @@ public class CubeCollisionDetector : MonoBehaviour
             Debug.Log("Cube passed center");
             // Notify that the cube passed the center
             GameEventManager.TriggerCubePassedCenter();
+            GameEventManager.TriggerSuccessfulJump();
         }
     }
 
@@ -24,6 +26,7 @@ public class CubeCollisionDetector : MonoBehaviour
             Debug.Log("Cube collided with player");
             // Notify that the cube collided with the player
             GameEventManager.TriggerPlayerCollision();
+            GameEventManager.TriggerFailedJump();
         }
     }
 }

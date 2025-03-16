@@ -5083,7 +5083,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -3.11}
-  m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 4200222716898263738}
@@ -5154,7 +5154,7 @@ MonoBehaviour:
   RRWTireSkid: {fileID: 2983524636643807383}
   useUI: 0
   carSpeedText: {fileID: 0}
-  useSounds: 0
+  useSounds: 1
   carEngineSound: {fileID: 0}
   tireScreechSound: {fileID: 0}
   useTouchControls: 0
@@ -5178,8 +5178,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae58e5bfda904034d9065372dda10a12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CenterColliderTag: CenterCollider
-  PlayerColliderTag: PlayerCollider
 --- !u!114 &-7592232093935116467
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5192,8 +5190,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc96f8a0ae64cbe44a44def21a4bd989, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _moveSpeed: 0
-  _offscreenIndicatorManager: {fileID: 0}
+  destroyDelay: 1
+  rotateEase: 3
+  offscreenIndicatorManager: {fileID: 0}
 --- !u!1 &2892508034813006429
 GameObject:
   m_ObjectHideFlags: 0

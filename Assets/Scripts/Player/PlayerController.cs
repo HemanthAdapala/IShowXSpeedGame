@@ -1,0 +1,112 @@
+using System;
+using DG.Tweening;
+using Managers;
+using UnityEngine;
+
+namespace Player
+{
+    [RequireComponent(typeof(PlayerAnimator),typeof(CapsuleCollider))]
+    [RequireComponent(typeof(Animator))]
+    public class PlayerController : MonoBehaviour
+    {
+        private bool _isJumping = false;
+        private Vector3 _originalPosition;
+        private Transform _currentTarget;
+    
+        public float jumpHeight = 2f;
+        public float jumpDuration = 0.5f;
+        public float perfectJumpDistance = 1.5f;
+        public float earlyJumpThreshold = 2f;
+        public float lateJumpThreshold = 1f;
+
+        public event Action OnJumpEarly;
+        public event Action OnJumpPerfect;
+        public event Action OnJumpLate;
+
+    
+        [SerializeField] private Ease rotateEase;
+        [SerializeField] private PlayerAnimator playerAnimator;
+        [SerializeField] private 
+
+        void Start()
+        {
+            if (playerAnimator == null)
+                playerAnimator = GetComponent<PlayerAnimator>();
+
+            _originalPosition = transform.position;
+            GameManager.Instance.OnVehicleSpawned += OnVehicleSpawned;
+            GameEventManager.OnPlayerCollision += HandlePlayerCollision;
+            
+        }
+
+        private void HandlePlayerCollision()
+        {
+            ResetValues();
+        }
+
+        private void OnVehicleSpawned(object sender, GameManager.VehicleSpawnedEventArgs e)
+        {
+            if (_currentTarget is null)
+            {
+                _currentTarget = e.CarController.transform;
+                RotateTowardsTarget(_currentTarget);
+            }
+        }
+
+        private void RotateTowardsTarget(Transform target)
+        {
+            // Calculate horizontal direction to target
+            Vector3 direction = target.position - transform.position;
+            direction.y = 0; // Ignore vertical difference
+            
+            // Only rotate if there's a valid direction
+            if (direction != Vector3.zero)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(direction);
+                transform.DORotateQuaternion(targetRotation, 0.5f).SetEase(rotateEase);
+            }
+        }
+
+        void Update()
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                Jump();
+            }
+        }
+
+        void Jump()
+        {
+            if (_isJumping) return;
+
+            _isJumping = true;
+            playerAnimator?.TriggerJumpAnimation();
+            CheckJumpTiming();
+
+            transform.DOMoveY(_originalPosition.y + jumpHeight, jumpDuration / 2)
+                .SetEase(Ease.OutQuad)
+                .OnComplete(() =>
+                {
+                    transform.DOMoveY(_originalPosition.y, jumpDuration / 2)
+                        .SetEase(Ease.InQuad)
+                        .OnComplete(ResetValues);
+                });
+        }
+
+        private void ResetValues()
+        {
+            _isJumping = false;
+            _currentTarget = null;
+        }
+
+        void CheckJumpTiming()
+        {
+            if (_currentTarget is null) return;
+
+            float distanceToVehicle = Vector3.Distance(transform.position, _currentTarget.position);
+            if (distanceToVehicle >= earlyJumpThreshold) OnJumpEarly?.Invoke();
+            else if (distanceToVehicle <= lateJumpThreshold) OnJumpLate?.Invoke();
+            else OnJumpPerfect?.Invoke();
+        }
+    }
+}
