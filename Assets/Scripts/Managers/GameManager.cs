@@ -1,114 +1,56 @@
-using System;
-using System.Collections;
-using Configs;
-using Controllers;
+using Player;
 using UnityEngine;
 
 namespace Managers
 {
     public class GameManager : MonoBehaviour
     {
-        #region Singleton
         public static GameManager Instance { get; private set; }
+        public PlayerData PlayerData { get; private set; }
+
+        private const string PlayerDataKey = "PlayerData"; // Key for PlayerPrefs storage
 
         private void Awake()
         {
-            if (Instance == null) Instance = this;
-            else Destroy(gameObject);
-        }
-        #endregion
-
-        public GameConfig gameConfig;
-        public GameVehiclesConfig gameVehiclesConfig;
-        public OffscreenIndicatorManager indicatorManager;
-        public float radius = 5f;
-
-        private int _score = 0;
-        private float _currentSpawnInterval;
-        private int _currentVehicleSpeed;
-        private int _streak = 0;
-
-        public event EventHandler<VehicleSpawnedEventArgs> OnVehicleSpawned;
-        public class VehicleSpawnedEventArgs : EventArgs
-        {
-            public PrometeoCarController CarController;
-        }
-
-        private void Start()
-        {
-            _currentSpawnInterval = gameConfig.initialSpawnInterval;
-            _currentVehicleSpeed = gameConfig.initialVehicleSpeed;
-            StartCoroutine(SpawnVehicles());
-        }
-
-        IEnumerator SpawnVehicles()
-        {
-            while (true)
+            if (Instance == null)
             {
-                SpawnVehicle();
-                yield return new WaitForSeconds(_currentSpawnInterval);
+                Instance = this;
+                DontDestroyOnLoad(gameObject);
+                LoadPlayerData();
+            }
+            else
+            {
+                Destroy(gameObject);
             }
         }
 
-        private void SpawnVehicle()
+        private void LoadPlayerData()
         {
-            GameObject vehiclePrefab = gameVehiclesConfig.GetVehiclePrefabForLevel(_score / 10);
-            if (vehiclePrefab == null) return;
-
-            bool isScareCar = UnityEngine.Random.value < gameConfig.scareCarChance; // Configurable probability
-
-            Vector3 spawnPosition = GetRandomPositionOnCircle(radius);
-            Vector3 targetPosition = isScareCar ? GetScareCarTarget(spawnPosition) : Vector3.zero;
-
-            GameObject vehicle = Instantiate(vehiclePrefab, spawnPosition, Quaternion.identity, transform);
-
-            ConfigureVehicle(vehicle, targetPosition, isScareCar);
-
-            OnVehicleSpawned?.Invoke(this, new VehicleSpawnedEventArgs { CarController = vehicle.GetComponent<PrometeoCarController>() });
-        }
-
-        private void ConfigureVehicle(GameObject vehicle, Vector3 targetPosition, bool isScareCar)
-        {
-            PrometeoCarController carController = vehicle.GetComponent<PrometeoCarController>();
-            if (carController != null)
+            if (PlayerPrefs.HasKey(PlayerDataKey))
             {
-                carController.maxSpeed = gameConfig.maxVehicleSpeed;
-                carController.accelerationMultiplier = gameConfig.accelerationMultiplier;
+                PlayerData = JsonUtility.FromJson<PlayerData>(PlayerPrefs.GetString(PlayerDataKey));
+                Debug.Log($"Loaded Player Data: {PlayerData.playerName}");
             }
-
-            VehicleController vehicleController = vehicle.GetComponent<VehicleController>();
-            if (vehicleController != null)
+            else
             {
-                vehicleController.offscreenIndicatorManager = indicatorManager;
-                vehicleController.SetTarget(targetPosition);
-                if (isScareCar)
-                {
-                    vehicleController.SetScareMode();
-                }
+                PlayerData = null; // No data found
             }
         }
 
-        private Vector3 GetRandomPositionOnCircle(float radius)
+        public void CreateNewPlayer(string playerName)
         {
-            float angle = UnityEngine.Random.Range(0f, Mathf.PI * 2f);
-            return new Vector3(
-                Mathf.Cos(angle) * radius,
-                0f,
-                Mathf.Sin(angle) * radius
-            );
+            PlayerData = new PlayerData(playerName, "Clarie", 0, 0, 1.0f, 0);
+            SavePlayerData();
         }
 
-        private Vector3 GetScareCarTarget(Vector3 spawnPosition)
+        private void SavePlayerData()
         {
-            Vector3 directionToCenter = (Vector3.zero - spawnPosition).normalized;
-
-            // Move the target slightly to the side instead of directly to the player
-            float lateralOffset = UnityEngine.Random.Range(gameConfig.scareCarMinOffset, gameConfig.scareCarMaxOffset);
-            Vector3 perpendicularOffset = Vector3.Cross(directionToCenter, Vector3.up) * lateralOffset;
-
-            // Adjust the target position so it passes slightly near the center, but not directly at it
-            return Vector3.zero + perpendicularOffset;
+            if (PlayerData != null)
+            {
+                PlayerPrefs.SetString(PlayerDataKey, JsonUtility.ToJson(PlayerData));
+                PlayerPrefs.Save();
+                Debug.Log("Player Data Saved.");
+            }
         }
-
     }
 }

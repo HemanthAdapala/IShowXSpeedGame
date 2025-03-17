@@ -42,7 +42,7 @@ namespace Managers
             if (indicator is not null)
             {
                 Destroy(indicator);
-                //GameManager.Instance.DestroyCurrentTarget();
+                //GamePlayManager.Instance.DestroyCurrentTarget();
             }
         }
     }

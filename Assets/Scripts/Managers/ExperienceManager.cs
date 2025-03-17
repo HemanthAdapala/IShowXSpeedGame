@@ -1,4 +1,5 @@
 using System;
+using Player;
 using UnityEngine;
 
 public class ExperienceManager : MonoBehaviour
@@ -8,19 +9,19 @@ public class ExperienceManager : MonoBehaviour
 
     public static void AddExperience(int baseXP)
     {
-        int xpGain = Mathf.RoundToInt(baseXP * PlayerProfileSystem.playerData.experienceMultiplier);
-        PlayerProfileSystem.playerData.experience += xpGain;
+        int xpGain = Mathf.RoundToInt(baseXP * PlayerProfileSystem.PlayerData.experienceMultiplier);
+        PlayerProfileSystem.PlayerData.experience += xpGain;
         OnExperienceGained?.Invoke(xpGain);
         CheckLevelUp();
     }
 
     private static void CheckLevelUp()
     {
-        while (PlayerProfileSystem.playerData.experience >= PlayerProfileSystem.playerData.RequiredExperience)
+        while (PlayerProfileSystem.PlayerData.experience >= PlayerProfileSystem.PlayerData.RequiredExperience)
         {
-            PlayerProfileSystem.playerData.experience -= PlayerProfileSystem.playerData.RequiredExperience;
-            PlayerProfileSystem.playerData.level++;
-            OnLevelUp?.Invoke(PlayerProfileSystem.playerData.level);
+            PlayerProfileSystem.PlayerData.experience -= PlayerProfileSystem.PlayerData.RequiredExperience;
+            PlayerProfileSystem.PlayerData.level++;
+            OnLevelUp?.Invoke(PlayerProfileSystem.PlayerData.level);
         }
         PlayerProfileSystem.SavePlayerData();
     }

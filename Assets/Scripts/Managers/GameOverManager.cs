@@ -4,28 +4,9 @@ using UnityEngine.Serialization;
 
 namespace Managers
 {
-    public class GameOverManager : MonoBehaviour
+    public class GameOverManager : Singleton<GameOverManager>
     {
-        #region Singleton
-        public static GameOverManager Instance { get; private set; }
-
-        private void Awake()
-        {
-            if (Instance == null)
-            {
-                Instance = this;
-                DontDestroyOnLoad(gameObject);
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
-        }
-        #endregion
-
-
-
-        [FormerlySerializedAs("MaxLives")] public int maxLives = 3; // Configurable number of lives
+        public int maxLives = 3; // Configurable number of lives
         private int _currentLives; // Current lives
 
         public int GetCurrentLives()

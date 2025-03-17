@@ -22,6 +22,7 @@ namespace Handlers
         [SerializeField] private Slider streakSlider;
 
         private int _streakCount = 0;
+        private float _initialScoreMultiplier = 1.0f;
         private float _scoreMultiplier = 1.0f;
         private float _sliderValue = 0f;
 
@@ -45,11 +46,9 @@ namespace Handlers
 
             OnStreakUpdated?.Invoke(_streakCount);
 
-            // ✅ FIXED MULTIPLIER JUMPING ISSUE
-            float milestoneMultiplier = streakConfig.GetMultiplier(_streakCount);
-            if (_scoreMultiplier != milestoneMultiplier)
+            if (!Mathf.Approximately(_scoreMultiplier, _initialScoreMultiplier))
             {
-                _scoreMultiplier = milestoneMultiplier;
+                _initialScoreMultiplier = _scoreMultiplier;
                 OnStreakMilestone?.Invoke(_scoreMultiplier);
             }
 

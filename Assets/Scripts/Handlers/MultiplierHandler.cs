@@ -22,13 +22,13 @@ namespace Handlers
         {
             ResetMultiplier(); // Ensure UI starts correctly
             StreakHandler.OnStreakMilestone += UpdateMultiplier;
-            StreakHandler.OnStreakUpdated += ResetMultiplierOnStreakReset;
+            StreakHandler.OnStreakReset += ResetMultiplierOnStreakReset;
         }
 
         private void OnDisable()
         {
             StreakHandler.OnStreakMilestone -= UpdateMultiplier;
-            StreakHandler.OnStreakUpdated -= ResetMultiplierOnStreakReset;
+            StreakHandler.OnStreakReset -= ResetMultiplierOnStreakReset;
         }
 
         private void UpdateMultiplier(float value)
@@ -41,12 +41,9 @@ namespace Handlers
             }
         }
 
-        private void ResetMultiplierOnStreakReset(int streakValue)
+        private void ResetMultiplierOnStreakReset()
         {
-            if (streakValue == 0)
-            {
-                ResetMultiplier();
-            }
+            ResetMultiplier();
         }
 
         private void ResetMultiplier()

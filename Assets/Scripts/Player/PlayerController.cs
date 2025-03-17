@@ -26,7 +26,7 @@ namespace Player
     
         [SerializeField] private Ease rotateEase;
         [SerializeField] private PlayerAnimator playerAnimator;
-        [SerializeField] private 
+        [SerializeField] private PlayerParticleEffectsHandler playerParticleEffectsHandler;
 
         void Start()
         {
@@ -34,7 +34,7 @@ namespace Player
                 playerAnimator = GetComponent<PlayerAnimator>();
 
             _originalPosition = transform.position;
-            GameManager.Instance.OnVehicleSpawned += OnVehicleSpawned;
+            GamePlayManager.Instance.OnVehicleSpawned += OnVehicleSpawned;
             GameEventManager.OnPlayerCollision += HandlePlayerCollision;
             
         }
@@ -44,7 +44,7 @@ namespace Player
             ResetValues();
         }
 
-        private void OnVehicleSpawned(object sender, GameManager.VehicleSpawnedEventArgs e)
+        private void OnVehicleSpawned(object sender, GamePlayManager.VehicleSpawnedEventArgs e)
         {
             if (_currentTarget is null)
             {
@@ -101,6 +101,7 @@ namespace Player
 
         void CheckJumpTiming()
         {
+            
             if (_currentTarget is null) return;
 
             float distanceToVehicle = Vector3.Distance(transform.position, _currentTarget.position);
