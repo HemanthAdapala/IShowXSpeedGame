@@ -85,15 +85,15 @@ namespace Managers
             _gameSessionData.SessionCoins += vehicleReward.coins;
         }
 
-        private void SaveTotalCoins()
-        {
-            _gameSessionData.TotalCoins = _gameSessionData.SessionCoins + _playerData.coins;
-        }
-
         public void SaveRequiredInfoForGameSessionAtEnd()
         {
             SaveTotalCoins();
             SaveTotalXp();
+        }
+        
+        private void SaveTotalCoins()
+        {
+            _gameSessionData.TotalCoins = _gameSessionData.SessionCoins + _playerData.coins;
         }
 
         private void SaveTotalXp()

@@ -12,7 +12,7 @@ namespace UI
 
         private PlayerData _playerData;
 
-        public void SetRewardsPanelUIData()
+        public void OnEnable()
         {
             _playerData = GameManager.Instance.GetPlayerData();
             if (_playerData is not null)

@@ -779,7 +779,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1830225789566705848}
   m_Layer: 0
-  m_Name: ExplosionTextEffectTransform
+  m_Name: HitTextEffectTransform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1595,8 +1595,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e6fddce1cae294439988b056f855991, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  explosionTextEffectTransform: {fileID: 1830225789566705848}
+  hitEffectTransform: {fileID: 1830225789566705848}
   bloodEffectTransform: {fileID: 9192331205092719737}
+  particleEffectsConfig: {fileID: 11400000, guid: a3e4735db5fe53944ab93f13ecad140e, type: 2}
 --- !u!1 &3178958329370967512
 GameObject:
   m_ObjectHideFlags: 0

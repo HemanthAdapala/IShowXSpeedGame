@@ -27,15 +27,17 @@ public class MainMenuUI : MonoBehaviour
     [Header("LevelConfig")]
     [SerializeField] private LevelProgressionConfig levelConfig;
 
-    private string _loadingScene = "LoadingScene";
+    private readonly string _loadingScene = "LoadingScene";
     private PlayerData _playerData;
 
 
     private void OnEnable()
     {
         playButton.onClick.AddListener(OnClickPlayButton);
-        submitNameButton.onClick.AddListener(OnSubmitName);
-        playerNameEnterPanel.SetActive(false);
+        if (playerNameEnterPanel.activeInHierarchy)
+        {
+            playerNameEnterPanel.SetActive(false);
+        }
     }
 
     private void Start()
@@ -50,13 +52,14 @@ public class MainMenuUI : MonoBehaviour
             if (!playerNameEnterPanel.activeInHierarchy)
             {
                 playerNameEnterPanel.SetActive(true);   
+                submitNameButton.onClick.AddListener(OnSubmitName);
             }
             lobbyPanel.SetActive(false);
 
         }
         else
         {
-            _playerData = GameManager.Instance.PlayerData;
+            _playerData = SaveSystem.LoadPlayerData();
             playerNameEnterPanel.SetActive(false);
             lobbyPanel.SetActive(true);
             SetLobbyUIData();
@@ -75,6 +78,7 @@ public class MainMenuUI : MonoBehaviour
             playButton.interactable = true;
             _playerData = GameManager.Instance.PlayerData;
             SetLobbyUIData();
+            SceneLoader.LoadScene("RewardsUIScene",true);
         }
     }
     
@@ -88,17 +92,35 @@ public class MainMenuUI : MonoBehaviour
 
     private void SetXpSliderData()
     {
-        var level = _playerData.level;
-        var xpRequired = levelConfig.GetXpForLevel(level);
-        xp.text = _playerData.xp + "/" + xpRequired;
-        var nextLevel = levelConfig.GetNextLevel(level);
-        xpSlider.value = (float)_playerData.xp / xpRequired;
+        int currentLevel = _playerData.level;
+        int currentXp = _playerData.xp;
+
+        // Get XP requirements
+        int prevXpRequired = (currentLevel > 1) ? levelConfig.GetXpForLevel(currentLevel - 1) : 0;
+        int xpRequired = levelConfig.GetXpForLevel(currentLevel);
+
+        // Ensure XP values are valid
+        if (xpRequired <= prevXpRequired)
+        {
+            Debug.LogError($"Invalid XP range for level {currentLevel}: Prev={prevXpRequired}, Required={xpRequired}");
+            return;
+        }
+
+        // Update XP text (current XP / XP needed for next level)
+        xp.text = $"{currentXp} / {xpRequired}";
+
+        // Calculate slider value as a percentage of progress in the current level
+        float sliderValue = (currentXp - prevXpRequired) / (float)(xpRequired - prevXpRequired);
+        xpSlider.value = Mathf.Clamp01(sliderValue); // Ensure value is between 0 and 1
+
+        Debug.Log($"XP: {currentXp}, Level: {currentLevel}, Prev XP: {prevXpRequired}, Required XP: {xpRequired}, Slider Value: {sliderValue}");
     }
+
 
     private void OnClickPlayButton()
     {
-        SceneLoader.UnloadScene("RewardsUIScene");
         SceneLoader.LoadScene(_loadingScene);
+        SceneLoader.UnloadScene("RewardsUIScene");
     }
 
     private void OnDisable()

@@ -5192,6 +5192,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   destroyDelay: 1
   rotateEase: 3
+  vehicleDataRewardConfig: {fileID: 11400000, guid: 90247ee9d99bb1f4fbd66cb3266c5818, type: 2}
   offscreenIndicatorManager: {fileID: 0}
 --- !u!1 &2892508034813006429
 GameObject:

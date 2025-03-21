@@ -4,7 +4,7 @@ using UnityEditor.AnimatedValues;
 
 [CustomEditor(typeof(PrometeoCarController))]
 [System.Serializable]
-public class PrometeoEditor : Editor{
+public class PrometeoEditor : UnityEditor.Editor{
 
   enum displayFieldType {DisplayAsAutomaticFields, DisplayAsCustomizableGUIFields}
   displayFieldType DisplayFieldType;

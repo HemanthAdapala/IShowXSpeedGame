@@ -11,8 +11,7 @@ namespace Managers
         public PlayerData PlayerData { get; private set; }
         public GameSessionData GameSessionData { get; private set; }
 
-        private const string PlayerDataKey = "PlayerData"; // Key for PlayerPrefs storage
-        private string rewardsUIScene = "RewardsUIScene";
+        private readonly string _rewardsUIScene = "RewardsUIScene";
 
 
         private void Awake()
@@ -21,8 +20,6 @@ namespace Managers
             {
                 Instance = this;
                 DontDestroyOnLoad(gameObject);
-                SceneLoader.LoadScene(rewardsUIScene,true);
-                SceneLoader.OnSceneLoadCompleted += OnSceneLoadCompleted;
                 LoadPlayerData();
             }
             else
@@ -31,16 +28,12 @@ namespace Managers
             }
         }
 
-        private void OnSceneLoadCompleted()
-        {
-            RewardsManager.Instance.EnableRewardsUIPanel();
-        }
-
         private void LoadPlayerData()
         {
             if (SaveSystem.SaveExists())
             {
                 PlayerData = SaveSystem.LoadPlayerData();
+                SceneLoader.LoadScene(_rewardsUIScene,true);
                 Debug.Log("✅ Player Data Loaded.");
             }
             else
@@ -48,8 +41,6 @@ namespace Managers
                 Debug.LogWarning("⚠️ No Save File Found.");
                 PlayerData = null;
             }
-            //Enable UI
-            
         }
 
         public void CreateNewPlayer(string playerName)
@@ -57,11 +48,9 @@ namespace Managers
             var initialPlayerCoins = 1000;
             PlayerData = new PlayerData(playerName, "Clarie", 1, 0, 1.0f, 0,0,0.0F,initialPlayerCoins);
             SavePlayerData();
-            //Enable the Rewards panel
-            RewardsManager.Instance.EnableRewardsUIPanel();
         }
 
-        public void SavePlayerData()
+        private void SavePlayerData()
         {
             if (PlayerData != null)
             {
@@ -69,10 +58,10 @@ namespace Managers
             }
         }
 
-        public void SaveGameSession(GameSessionData gameSessionData)
+        public void SaveGameSession()
         {
             GameSessionManager.Instance.SaveRequiredInfoForGameSessionAtEnd();
-            GameSessionData = gameSessionData;
+            GameSessionData = GamePlayManager.Instance.GetGameSessionData();
             Debug.Log("✅ Final Game Session Data Saved.");
         }
 

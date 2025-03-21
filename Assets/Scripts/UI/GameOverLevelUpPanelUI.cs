@@ -41,9 +41,9 @@ namespace UI
 
         private void OnClickContinueButton()
         {
-            SceneLoader.LoadScene("RewardsUIScene",true);
-            SceneLoader.LoadScene(_lobbyScene,true);
             SceneLoader.UnloadScene(_gameOverScene);
+            SceneLoader.LoadScene(_lobbyScene,false);
+            SceneLoader.LoadScene("RewardsUIScene",true);
         }
 
         private void SetPrePlayerData()

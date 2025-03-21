@@ -47,7 +47,7 @@ namespace Managers
         void GameOver()
         {
             Debug.Log("🛑 Game Over!");
-            GameManager.Instance.SaveGameSession(GamePlayManager.Instance.GetGameSessionData());
+            GameManager.Instance.SaveGameSession();
             SceneManager.LoadScene(GameOverScene);
         }
     }

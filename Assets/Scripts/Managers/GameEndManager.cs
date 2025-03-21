@@ -35,15 +35,7 @@ namespace Managers
             Debug.Log("Total Coins: " + totalCoins);
             Debug.Log("Total XP: " + totalXp);
             
-            
-            //Calculate PlayerData using SessionData
-            int[] levelsSurpassed = levelProgressionConfig.GetLevelsSurpassed(_playerData.xp, totalXp);
-            int level = levelProgressionConfig.GetLevelForXp(sessionDataXpEarned);
             gameOverLevelUpPanelUI.SetUpUIData();
-            
-            
-            Debug.Log("Levels Surpassed: " + string.Join(", ", levelsSurpassed));
-            Debug.Log("Level: " + level);
             
             SaveGameSessionDataToPlayerData();
         }
@@ -52,12 +44,17 @@ namespace Managers
         {
             if (_playerData != null)
             {
-                _playerData.bestScore = _sessionData.Score;
+                //Set the players best score if the current score is higher than the players already best score
+                if (_playerData.bestScore < _sessionData.Score)
+                {
+                    _playerData.bestScore = _sessionData.Score;
+                }
                 _playerData.bestStreak = _sessionData.MaxStreak;
                 _playerData.bestMultiplier = _sessionData.MaxMultiplier;
-                _playerData.xp = _sessionData.SessionXp;
+                _playerData.xp = _sessionData.TotalXp;
                 _playerData.coins = _sessionData.TotalCoins;
                 _playerData.level = levelProgressionConfig.GetLevelForXp(_sessionData.TotalXp);
+                Debug.Log("PlayerLevel" + _playerData.level);
                 
                 SaveSystem.SavePlayerData(_playerData);
             }

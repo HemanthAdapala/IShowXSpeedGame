@@ -23,16 +23,5 @@ namespace Managers
                 Destroy(gameObject);
             }
         }
-
-        public void EnableRewardsUIPanel()
-        {
-            if (rewardsUI == null) return;
-            
-            if (!rewardsUI.gameObject.activeInHierarchy)
-            {
-                rewardsUI.gameObject.SetActive(true);
-            }
-            rewardsUI.SetRewardsPanelUIData();
-        }
     }
 }

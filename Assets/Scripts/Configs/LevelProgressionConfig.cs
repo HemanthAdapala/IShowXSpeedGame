@@ -47,19 +47,27 @@ namespace Configs
 
         public int GetLevelForXp(int xp)
         {
-            int level = 1; // Default level
+            if (levels == null || levels.Length == 0)
+            {
+                Debug.LogError("Level data is empty!");
+                return 1;
+            }
+
+            int level = 1; // Default to level 1
 
             for (int i = 0; i < levels.Length; i++)
             {
                 if (xp < levels[i].xpRequired)
                 {
-                    return level; // Return last valid level before exceeding XP
+                    level = levels[i].level;
+                    return level; // Return the last valid level
                 }
-                level = levels[i].level; // Update level as we progress
             }
 
-            return level; // If XP exceeds all levels, return the highest level
+            return levels[^1].level; // If XP exceeds all levels, return the max level
         }
+
+
         
         public int[] GetLevelsSurpassed(int currentXp, int totalXp)
         {

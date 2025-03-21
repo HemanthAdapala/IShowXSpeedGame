@@ -119,8 +119,7 @@ namespace Managers
         
         public GameSessionData GetGameSessionData()
         {
-            GameSessionManager gameSessionManager = FindAnyObjectByType<GameSessionManager>();
-            GameSessionData sessionData = gameSessionManager.GameSessionData;
+            GameSessionData sessionData = GameSessionManager.Instance.GameSessionData;
             return sessionData;
         }
 
