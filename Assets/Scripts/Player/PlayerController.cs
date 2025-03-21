@@ -9,6 +9,27 @@ namespace Player
     [RequireComponent(typeof(Animator))]
     public class PlayerController : MonoBehaviour
     {
+        #region Singleton
+
+        private static PlayerController _instance;
+        public static PlayerController Instance => _instance;
+
+        private void Awake()
+        {
+            if (_instance == null)
+            {
+                _instance = this;
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+
+            _originalPosition = transform.position;
+        }
+
+        #endregion
+        
         private bool _isJumping = false;
         private Vector3 _originalPosition;
         private Transform _currentTarget;
@@ -26,17 +47,27 @@ namespace Player
     
         [SerializeField] private Ease rotateEase;
         [SerializeField] private PlayerAnimator playerAnimator;
+        public PlayerAnimator PlayerAnimator => playerAnimator;
         [SerializeField] private PlayerParticleEffectsHandler playerParticleEffectsHandler;
+        public PlayerParticleEffectsHandler PlayerParticleEffectsHandler => playerParticleEffectsHandler;
 
         void Start()
         {
             if (playerAnimator == null)
                 playerAnimator = GetComponent<PlayerAnimator>();
 
-            _originalPosition = transform.position;
+            if (playerParticleEffectsHandler == null)
+                playerParticleEffectsHandler = GetComponentInChildren<PlayerParticleEffectsHandler>();
+
+            this.transform.position = _originalPosition;
             GamePlayManager.Instance.OnVehicleSpawned += OnVehicleSpawned;
-            GameEventManager.OnPlayerCollision += HandlePlayerCollision;
+            GameEventManager.OnFailedJump += HandlePlayerCollision;
             
+        }
+
+        private void OnDestroy()
+        {
+            GameEventManager.OnFailedJump -= HandlePlayerCollision;
         }
 
         private void HandlePlayerCollision()
@@ -95,13 +126,13 @@ namespace Player
 
         private void ResetValues()
         {
+            Debug.Log("Player collision detected_PlayerConroller!");
             _isJumping = false;
             _currentTarget = null;
         }
 
         void CheckJumpTiming()
         {
-            
             if (_currentTarget is null) return;
 
             float distanceToVehicle = Vector3.Distance(transform.position, _currentTarget.position);

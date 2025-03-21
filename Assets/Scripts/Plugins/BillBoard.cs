@@ -1,17 +1,19 @@
-using System;
 using UnityEngine;
 
-public class BillBoard : MonoBehaviour
+namespace Plugins
 {
-    private Quaternion _initialRotation;
-
-    private void Start()
+    public class BillBoard : MonoBehaviour
     {
-        _initialRotation = transform.rotation;
-    }
+        private Quaternion _initialRotation;
 
-    private void LateUpdate()
-    {
-        transform.rotation = _initialRotation;
+        private void Start()
+        {
+            _initialRotation = transform.rotation;
+        }
+
+        private void LateUpdate()
+        {
+            transform.rotation = _initialRotation;
+        }
     }
 }

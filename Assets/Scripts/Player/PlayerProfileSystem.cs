@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Player
 {
@@ -41,32 +42,4 @@ namespace Player
             PlayerPrefs.Save();
         }
     }
-
-    [System.Serializable]
-    public class PlayerData
-    {
-        public string playerName;
-        public string playerCurrentCharacterName;
-        public int level = 0;
-        public int experience = 0;
-        public float experienceMultiplier = 1.0f;
-        public int streakCounter = 0;
-
-        public int RequiredExperience => (level + 1) * 10;
-
-        // ✅ Default constructor for JSON serialization
-        public PlayerData() { }
-
-        // ✅ Custom constructor for new players
-        public PlayerData(string playerName, string playerCurrentCharacterName, int level, int experience, float experienceMultiplier, int streakCounter)
-        {
-            this.playerName = playerName;
-            this.playerCurrentCharacterName = playerCurrentCharacterName;
-            this.level = level;
-            this.experience = experience;
-            this.experienceMultiplier = experienceMultiplier;
-            this.streakCounter = streakCounter;
-        }
-    }
-
 }

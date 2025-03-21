@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using Configs;
 using Controllers;
+using Data;
 using UnityEngine;
 
 namespace Managers
@@ -10,41 +11,20 @@ namespace Managers
     {
         #region Singleton
 
-        private static GamePlayManager instance;
-        public static GamePlayManager Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    SetupInstance();
-                }
-                return instance;
-            }
-        }
+        private static GamePlayManager _instance;
+        public static GamePlayManager Instance => _instance;
         private void Awake()
         {
-            if (instance == null)
+            if (_instance == null)
             {
-                instance = this;
-                DontDestroyOnLoad(this.gameObject);
+                _instance = this;
             }
             else
             {
                 Destroy(gameObject);
             }
         }
-        private static void SetupInstance()
-        {
-            instance = FindAnyObjectByType<GamePlayManager>();
-            if (instance == null)
-            {
-                GameObject gameObj = new GameObject();
-                gameObj.name = "GamePlayManager";
-                instance = gameObj.AddComponent<GamePlayManager>();
-                DontDestroyOnLoad(gameObj);
-            }
-        }
+        
         #endregion
 
         public GameConfig gameConfig;
@@ -54,8 +34,7 @@ namespace Managers
 
         private int _score = 0;
         private float _currentSpawnInterval;
-        private int _currentVehicleSpeed;
-        private int _streak = 0;
+        
 
         public event EventHandler<VehicleSpawnedEventArgs> OnVehicleSpawned;
         public class VehicleSpawnedEventArgs : EventArgs
@@ -66,7 +45,6 @@ namespace Managers
         private void Start()
         {
             _currentSpawnInterval = gameConfig.initialSpawnInterval;
-            _currentVehicleSpeed = gameConfig.initialVehicleSpeed;
             StartCoroutine(SpawnVehicles());
         }
 
@@ -137,6 +115,13 @@ namespace Managers
 
             // Adjust the target position so it passes slightly near the center, but not directly at it
             return Vector3.zero + perpendicularOffset;
+        }
+        
+        public GameSessionData GetGameSessionData()
+        {
+            GameSessionManager gameSessionManager = FindAnyObjectByType<GameSessionManager>();
+            GameSessionData sessionData = gameSessionManager.GameSessionData;
+            return sessionData;
         }
 
     }

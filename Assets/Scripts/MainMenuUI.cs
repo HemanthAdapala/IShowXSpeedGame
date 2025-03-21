@@ -1,27 +1,44 @@
+using System;
+using Configs;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Managers;
-using UnityEngine.SceneManagement;
+using Player;
+using Plugins;
 
 public class MainMenuUI : MonoBehaviour
 {
     [Header("UI References")]
     [SerializeField] private Button playButton;
     [SerializeField] private GameObject playerNameEnterPanel;
+    [SerializeField] private GameObject lobbyPanel;
     [SerializeField] private TMP_InputField nameInputField;
     [SerializeField] private Button submitNameButton;
+    
+    
+    [Header("Lobby UI References")]
+    [SerializeField] private TextMeshProUGUI bestScoreText;
+    [SerializeField] private TextMeshProUGUI playerNameText;
+    [SerializeField] private TextMeshProUGUI levelText;
+    [SerializeField] private TextMeshProUGUI xp;
+    [SerializeField] private Slider xpSlider;
+    
+    [Header("LevelConfig")]
+    [SerializeField] private LevelProgressionConfig levelConfig;
 
-    private string _gameSceneName = "MainGameScene";
+    private string _loadingScene = "LoadingScene";
+    private PlayerData _playerData;
 
-    private void Awake()
+
+    private void OnEnable()
     {
         playButton.onClick.AddListener(OnClickPlayButton);
         submitNameButton.onClick.AddListener(OnSubmitName);
         playerNameEnterPanel.SetActive(false);
     }
 
-    private void OnEnable()
+    private void Start()
     {
         CheckPlayerData();
     }
@@ -34,12 +51,15 @@ public class MainMenuUI : MonoBehaviour
             {
                 playerNameEnterPanel.SetActive(true);   
             }
-            playButton.interactable = false;
+            lobbyPanel.SetActive(false);
+
         }
         else
         {
+            _playerData = GameManager.Instance.PlayerData;
             playerNameEnterPanel.SetActive(false);
-            playButton.interactable = true;
+            lobbyPanel.SetActive(true);
+            SetLobbyUIData();
         }
     }
 
@@ -51,14 +71,39 @@ public class MainMenuUI : MonoBehaviour
         {
             GameManager.Instance.CreateNewPlayer(playerName);
             playerNameEnterPanel.SetActive(false);
+            lobbyPanel.SetActive(true);
             playButton.interactable = true;
+            _playerData = GameManager.Instance.PlayerData;
+            SetLobbyUIData();
         }
+    }
+    
+    private void SetLobbyUIData()
+    {
+        playerNameText.text = _playerData.playerName;
+        levelText.text = _playerData.level.ToString();
+        SetXpSliderData();
+        bestScoreText.text = "BEST SCORE:- " + _playerData.bestScore;
+    }
+
+    private void SetXpSliderData()
+    {
+        var level = _playerData.level;
+        var xpRequired = levelConfig.GetXpForLevel(level);
+        xp.text = _playerData.xp + "/" + xpRequired;
+        var nextLevel = levelConfig.GetNextLevel(level);
+        xpSlider.value = (float)_playerData.xp / xpRequired;
     }
 
     private void OnClickPlayButton()
     {
-        SceneManager.LoadScene(_gameSceneName);
+        SceneLoader.UnloadScene("RewardsUIScene");
+        SceneLoader.LoadScene(_loadingScene);
     }
 
-    
+    private void OnDisable()
+    {
+        playButton.onClick.RemoveListener(OnClickPlayButton);
+        submitNameButton.onClick.RemoveListener(OnSubmitName);
+    }
 }

@@ -13,7 +13,7 @@ namespace Plugins
         private float _initialLoadingValue = 0f;
         private readonly float _loadingCompleteValue = 1.0f;
         
-        private readonly string _mainGameSceneName = "MainGameScene";
+        private readonly string _gameSceneName = "GameScene";
 
         public void StartLoadingBarFill()
         {
@@ -21,7 +21,7 @@ namespace Plugins
             loadingBar.DOValue(_loadingCompleteValue, 2f).SetEase(Ease.OutQuad).OnComplete(() =>
             {
                 Debug.Log("Loading Complete!");
-                SceneLoader.LoadScene(_mainGameSceneName);
+                SceneLoader.LoadScene(_gameSceneName);
             });
         }
     }

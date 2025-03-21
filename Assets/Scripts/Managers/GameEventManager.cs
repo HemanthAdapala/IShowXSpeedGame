@@ -1,46 +1,53 @@
 using System;
+using Configs;
 using UnityEngine;
 
 namespace Managers
 {
     public class GameEventManager : MonoBehaviour
     {
-        // Event for when a cube passes the center
-        public static event Action OnCubePassedCenter;
-
-        // Event for when a cube collides with the player
-        public static event Action OnPlayerCollision;
-
         // Event for when the player successfully jumps
         public static event Action OnSuccessfulJump;
-        
+        public static event Action<VehicleDataRewardConfig> OnSuccessfulJumpWithVehicleRewardConfig;
         // Event for when the player fails to jump
         public static event Action OnFailedJump;
+        // Event for when Streak is updated
+        public static event Action<int> OnStreakUpdated;
+        // Event for when Multiplier is updated
+        public static event Action<float> OnMultiplierUpdated;
+        // Event for when Score is updated
+        public static event Action<int> OnScoreUpdated;
         
 
-        // Trigger the cube passed center event
-        public static void TriggerCubePassedCenter()
-        {
-            Debug.Log("📢 Event Triggered: Cube Passed Center");
-            OnCubePassedCenter?.Invoke();
-        }
-
-        public static void TriggerPlayerCollision()
-        {
-            Debug.Log("📢 Event Triggered: Player Collision");
-            OnPlayerCollision?.Invoke();
-        }
-
-        public static void TriggerSuccessfulJump()
+        public static void TriggerSuccessfulJump(VehicleDataRewardConfig vehicleRewardConfig)
         {
             Debug.Log("📢 Event Triggered: Successful Jump");
             OnSuccessfulJump?.Invoke();
+            OnSuccessfulJumpWithVehicleRewardConfig?.Invoke(vehicleRewardConfig);
         }
 
         public static void TriggerFailedJump()
         {
             Debug.Log("📢 Event Triggered: Failed Jump");
             OnFailedJump?.Invoke();
+        }
+        
+        public static void TriggerStreakUpdated(int streakCount)
+        {
+            Debug.Log("📢 Event Triggered: Streak Updated");
+            OnStreakUpdated?.Invoke(streakCount);
+        }
+        
+        public static void TriggerMultiplierUpdated(float multiplier)
+        {
+            Debug.Log("📢 Event Triggered: Multiplier Updated");
+            OnMultiplierUpdated?.Invoke(multiplier);
+        }
+        
+        public static void TriggerScoreUpdated(int score)
+        {
+            Debug.Log("📢 Event Triggered: Score Updated");
+            OnScoreUpdated?.Invoke(score);
         }
 
     }

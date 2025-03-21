@@ -14,6 +14,8 @@ namespace Player
         [SerializeField] private Transform multiplierCanvas;
         [SerializeField] private TextMeshProUGUI streakText;
         [SerializeField] private TextMeshProUGUI multiplierText;
+        
+        [SerializeField] private bool isPlayerCanvasUIEnabled;
 
         [Header("Text Configuration")]
         [SerializeField] private TextConfig textConfig;
@@ -49,10 +51,10 @@ namespace Player
             _textQueue.Enqueue(() =>
             {
                 string message = $"+{value}"; // Always show +1 streak
-                if (UnityEngine.Random.value < 0.2f) // 20% chance for special message
-                {
-                    message = textConfig.GetRandomContinuousMessage() + $" +{value}";
-                }
+                // if (UnityEngine.Random.value < 0.2f) // 20% chance for special message
+                // {
+                //     message = textConfig.GetRandomContinuousMessage() + $" +{value}";
+                // }
                 ShowFloatingText(streakCanvas, streakText, message, _initialStreakPosition);
             });
 
@@ -65,10 +67,10 @@ namespace Player
             _textQueue.Enqueue(() =>
             {
                 string message = $"+{value:F1}"; // Always show +1.0 multiplier
-                if (UnityEngine.Random.value < 0.2f) // 20% chance for special message
-                {
-                    message = textConfig.GetRandomContinuousMessage() + $" +{value:F1}";
-                }
+                // if (UnityEngine.Random.value < 0.2f) // 20% chance for special message
+                // {
+                //     message = textConfig.GetRandomContinuousMessage() + $" +{value:F1}";
+                // }
                 ShowFloatingText(multiplierCanvas, multiplierText, message, _initialMultiplierPosition);
             });
 
@@ -80,7 +82,7 @@ namespace Player
         {
             _textQueue.Enqueue(() =>
             {
-                string message = textConfig.GetRandomLostMessage();
+                string message = "Lost the Streak!"; //"textConfig.GetRandomLostMessage();
                 ShowFloatingText(streakCanvas, streakText, message, _initialStreakPosition);
             });
 

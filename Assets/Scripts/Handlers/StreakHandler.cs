@@ -31,6 +31,8 @@ namespace Handlers
             GameEventManager.OnSuccessfulJump += IncreaseStreak;
             GameEventManager.OnFailedJump += ResetStreak;
             ResetUIData();
+            // Set initial UI text
+            streakText.text = "Max:- " + streakConfig.milestoneThresholds[0].ToString();
         }
 
         private void OnDisable()
@@ -44,28 +46,58 @@ namespace Handlers
             _streakCount++;
             _scoreMultiplier = streakConfig.GetMultiplier(_streakCount);
 
-            OnStreakUpdated?.Invoke(_streakCount);
+            StreakUpdated();
 
             if (!Mathf.Approximately(_scoreMultiplier, _initialScoreMultiplier))
             {
                 _initialScoreMultiplier = _scoreMultiplier;
-                OnStreakMilestone?.Invoke(_scoreMultiplier);
+                MultiplierUpdated();
+                Debug.Log("🎉 Milestone reached!" + _scoreMultiplier);
             }
 
             SetUIData();
             Debug.Log($"🔥 Streak: {_streakCount} | Multiplier: {_scoreMultiplier}");
         }
 
+        private void MultiplierUpdated()
+        {
+            OnStreakMilestone?.Invoke(_scoreMultiplier);
+            GameEventManager.TriggerMultiplierUpdated(_scoreMultiplier);
+        }
+
+        private void StreakUpdated()
+        {
+            OnStreakUpdated?.Invoke(_streakCount);
+            GameEventManager.TriggerStreakUpdated(_streakCount);
+        }
+
         private void SetUIData()
         {
-            _sliderValue = Mathf.Clamp(_streakCount / 10f, 0f, 1f);
-            streakSlider.DOValue(_sliderValue, 0.5f).SetEase(Ease.OutQuad);
+            for (int i = 0; i < streakConfig.milestoneThresholds.Length; i++)
+            {
+                int streakThreshold = streakConfig.milestoneThresholds[i];
+                if (_streakCount <= streakThreshold)
+                {
+                    streakText.text = "Max: " + streakThreshold.ToString();
+                    SetSliderValue();
+                    return;
+                }
+            }
+
+            void SetSliderValue()
+            {
+                _sliderValue = Mathf.Clamp(_streakCount / 10f, 0f, 1f);
+                streakSlider.DOValue(_sliderValue, 0.5f).SetEase(Ease.OutQuad);
+            }
         }
 
         private void ResetStreak()
         {
+            Debug.Log("Player collision detected_StreakHandler!");
             _streakCount = 0;
             _scoreMultiplier = 1.0f;
+            GameEventManager.TriggerStreakUpdated(_streakCount);
+            GameEventManager.TriggerMultiplierUpdated(_scoreMultiplier);
 
             OnStreakReset?.Invoke();
             ResetUIData();

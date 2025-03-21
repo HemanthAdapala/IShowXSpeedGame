@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 
 namespace Managers
 {
@@ -8,6 +7,7 @@ namespace Managers
     {
         public int maxLives = 3; // Configurable number of lives
         private int _currentLives; // Current lives
+        
 
         public int GetCurrentLives()
         {
@@ -21,13 +21,13 @@ namespace Managers
             _currentLives = maxLives;
 
             // Subscribe to the player collision event
-            GameEventManager.OnPlayerCollision += HandlePlayerCollision;
+            GameEventManager.OnFailedJump += HandlePlayerCollision;
         }
 
         void OnDisable()
         {
             // Unsubscribe from the event
-            GameEventManager.OnPlayerCollision -= HandlePlayerCollision;
+            GameEventManager.OnFailedJump -= HandlePlayerCollision;
         }
 
         void HandlePlayerCollision()
@@ -40,14 +40,14 @@ namespace Managers
             }
             else
             {
-                Debug.Log("Life lost! Lives remaining: " + _currentLives);
+                Debug.Log("💔 Life lost! Lives remaining: " + _currentLives);
             }
         }
 
         void GameOver()
         {
-            Debug.Log("Game Over!");
-            // Reload the scene or show a game over screen
+            Debug.Log("🛑 Game Over!");
+            GameManager.Instance.SaveGameSession(GamePlayManager.Instance.GetGameSessionData());
             SceneManager.LoadScene(GameOverScene);
         }
     }

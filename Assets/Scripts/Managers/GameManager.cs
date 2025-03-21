@@ -1,4 +1,6 @@
+using Data;
 using Player;
+using Plugins;
 using UnityEngine;
 
 namespace Managers
@@ -7,8 +9,11 @@ namespace Managers
     {
         public static GameManager Instance { get; private set; }
         public PlayerData PlayerData { get; private set; }
+        public GameSessionData GameSessionData { get; private set; }
 
         private const string PlayerDataKey = "PlayerData"; // Key for PlayerPrefs storage
+        private string rewardsUIScene = "RewardsUIScene";
+
 
         private void Awake()
         {
@@ -16,6 +21,8 @@ namespace Managers
             {
                 Instance = this;
                 DontDestroyOnLoad(gameObject);
+                SceneLoader.LoadScene(rewardsUIScene,true);
+                SceneLoader.OnSceneLoadCompleted += OnSceneLoadCompleted;
                 LoadPlayerData();
             }
             else
@@ -24,33 +31,59 @@ namespace Managers
             }
         }
 
+        private void OnSceneLoadCompleted()
+        {
+            RewardsManager.Instance.EnableRewardsUIPanel();
+        }
+
         private void LoadPlayerData()
         {
-            if (PlayerPrefs.HasKey(PlayerDataKey))
+            if (SaveSystem.SaveExists())
             {
-                PlayerData = JsonUtility.FromJson<PlayerData>(PlayerPrefs.GetString(PlayerDataKey));
-                Debug.Log($"Loaded Player Data: {PlayerData.playerName}");
+                PlayerData = SaveSystem.LoadPlayerData();
+                Debug.Log("✅ Player Data Loaded.");
             }
             else
             {
-                PlayerData = null; // No data found
+                Debug.LogWarning("⚠️ No Save File Found.");
+                PlayerData = null;
             }
+            //Enable UI
+            
         }
 
         public void CreateNewPlayer(string playerName)
         {
-            PlayerData = new PlayerData(playerName, "Clarie", 0, 0, 1.0f, 0);
+            var initialPlayerCoins = 1000;
+            PlayerData = new PlayerData(playerName, "Clarie", 1, 0, 1.0f, 0,0,0.0F,initialPlayerCoins);
             SavePlayerData();
+            //Enable the Rewards panel
+            RewardsManager.Instance.EnableRewardsUIPanel();
         }
 
-        private void SavePlayerData()
+        public void SavePlayerData()
         {
             if (PlayerData != null)
             {
-                PlayerPrefs.SetString(PlayerDataKey, JsonUtility.ToJson(PlayerData));
-                PlayerPrefs.Save();
-                Debug.Log("Player Data Saved.");
+                SaveSystem.SavePlayerData(PlayerData);
             }
+        }
+
+        public void SaveGameSession(GameSessionData gameSessionData)
+        {
+            GameSessionManager.Instance.SaveRequiredInfoForGameSessionAtEnd();
+            GameSessionData = gameSessionData;
+            Debug.Log("✅ Final Game Session Data Saved.");
+        }
+
+        public GameSessionData GetGameSessionData()
+        {
+            return GameSessionData;
+        }
+        
+        public PlayerData GetPlayerData()
+        {
+            return PlayerData;
         }
     }
 }

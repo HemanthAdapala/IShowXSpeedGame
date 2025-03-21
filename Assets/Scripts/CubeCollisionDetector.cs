@@ -1,4 +1,6 @@
 using System;
+using Configs;
+using Controllers;
 using Managers;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -12,10 +14,10 @@ public class CubeCollisionDetector : MonoBehaviour
     {
         if (other.gameObject.CompareTag(CenterColliderTag))
         {
-            Debug.Log("Cube passed center");
-            // Notify that the cube passed the center
-            GameEventManager.TriggerCubePassedCenter();
-            GameEventManager.TriggerSuccessfulJump();
+            Debug.Log("vehicle passed center");
+            // Notify that the vehicle passed the center
+            var vehicleRewardConfig = this.gameObject.GetComponent<VehicleController>().GetVehicleDataRewardConfig();
+            GameEventManager.TriggerSuccessfulJump(vehicleRewardConfig);
         }
     }
 
@@ -23,9 +25,8 @@ public class CubeCollisionDetector : MonoBehaviour
     {
         if (other.gameObject.CompareTag(PlayerColliderTag))
         {
-            Debug.Log("Cube collided with player");
-            // Notify that the cube collided with the player
-            GameEventManager.TriggerPlayerCollision();
+            Debug.Log("vehicle collided with player");
+            // Notify that the vehicle collided with the player
             GameEventManager.TriggerFailedJump();
         }
     }

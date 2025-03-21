@@ -12,6 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdc02e6c19cb6564ea68ea40a6d21f6b, type: 3}
   m_Name: ClarieParticleEffectsConfig
   m_EditorClassIdentifier: 
-  bloodEffects: []
-  hitEffects: []
+  bloodEffects:
+  - {fileID: 195360, guid: a3c24a5ae068ed44d950af671f99cc21, type: 3}
+  - {fileID: 142478, guid: 120d855bc18f7fa4f8c46575d5629105, type: 3}
+  - {fileID: 168136, guid: 47c6eee70f9391f46a710b0592491a63, type: 3}
+  hitEffects:
+  - {fileID: 1269060166065924, guid: 1810168468ffe7b4db7f3c67e0743de4, type: 3}
+  - {fileID: 1883610838541854, guid: aa72280b4bb67cb468b0ffc37bcfc9c0, type: 3}
+  - {fileID: 1930644504616354, guid: be3a8d67cedf6394c995b869e16f4418, type: 3}
   jumpEffects: []

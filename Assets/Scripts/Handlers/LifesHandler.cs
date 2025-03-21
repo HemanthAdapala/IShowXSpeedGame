@@ -8,18 +8,19 @@ public class LifesHandler : MonoBehaviour
 
     void Start()
     {
-        GameEventManager.OnPlayerCollision += HandlePlayerCollision;
+        GameEventManager.OnFailedJump += HandlePlayerCollision;
     }
 
     private void HandlePlayerCollision()
     {
         int currentLives = GameOverManager.Instance.GetCurrentLives();
         Debug.Log("Life lost! Lives remaining: ");
+        Debug.Log("Player collision detected_LifesHandler!");
         lifes[currentLives - 1].gameObject.SetActive(false);
     }
 
     void OnDisable()
     {
-        GameEventManager.OnPlayerCollision -= HandlePlayerCollision;
+        GameEventManager.OnFailedJump -= HandlePlayerCollision;
     }
 }

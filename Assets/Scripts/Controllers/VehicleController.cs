@@ -1,6 +1,8 @@
+using Configs;
 using DG.Tweening;
 using Managers;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Controllers
 {
@@ -16,12 +18,15 @@ namespace Controllers
 
         [SerializeField] private float destroyDelay = 1f;
         [SerializeField] private Ease rotateEase = Ease.OutSine;
+        [SerializeField] private VehicleDataRewardConfig vehicleDataRewardConfig;
 
         public OffscreenIndicatorManager offscreenIndicatorManager;
+        
+        public VehicleDataRewardConfig GetVehicleDataRewardConfig() => vehicleDataRewardConfig;
 
         void Start()
         {
-            GameEventManager.OnPlayerCollision += HandlePlayerCollision;
+            GameEventManager.OnFailedJump += HandlePlayerCollision;
             _carController = GetComponent<PrometeoCarController>();
 
             if (_carController == null)
@@ -98,13 +103,14 @@ namespace Controllers
 
         private void HandlePlayerCollision()
         {
+            Debug.Log("Player collision detected_VehicleController!");
             Destroy(gameObject);
             if (Camera.main != null) Camera.main.transform.DOShakePosition(0.5f, 0.5f, 10, 90, false, true);
         }
 
         void OnDisable()
         {
-            GameEventManager.OnPlayerCollision -= HandlePlayerCollision;
+            GameEventManager.OnFailedJump -= HandlePlayerCollision;
         }
 
         public void SetScareMode()

@@ -37,7 +37,7 @@ namespace Handlers
             // Fetch streak multiplier **AFTER** it updates
             float multiplier = streakHandler.GetMultiplier();  
             _currentScore += Mathf.RoundToInt(100 * multiplier); // Apply multiplier
-            
+            GameEventManager.TriggerScoreUpdated(_currentScore);
             UpdateScoreDisplay();
         }
 
