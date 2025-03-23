@@ -36,13 +36,14 @@ namespace Managers
             return indicator;
         }
 
+        
+
         // Destroy an indicator
         public void DestroyIndicator(GameObject indicator)
         {
             if (indicator is not null)
             {
                 Destroy(indicator);
-                //GamePlayManager.Instance.DestroyCurrentTarget();
             }
         }
     }

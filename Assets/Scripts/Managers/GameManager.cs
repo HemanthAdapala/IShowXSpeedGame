@@ -55,6 +55,7 @@ namespace Managers
             if (PlayerData != null)
             {
                 SaveSystem.SavePlayerData(PlayerData);
+                PlayerData = SaveSystem.LoadPlayerData();
             }
         }
 
@@ -63,6 +64,11 @@ namespace Managers
             GameSessionManager.Instance.SaveRequiredInfoForGameSessionAtEnd();
             GameSessionData = GamePlayManager.Instance.GetGameSessionData();
             Debug.Log("✅ Final Game Session Data Saved.");
+        }
+
+        public void SetUpdatedPlayerData(PlayerData playerData)
+        {
+            PlayerData = playerData;
         }
 
         public GameSessionData GetGameSessionData()

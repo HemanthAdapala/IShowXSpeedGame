@@ -57,6 +57,7 @@ namespace Managers
                 Debug.Log("PlayerLevel" + _playerData.level);
                 
                 SaveSystem.SavePlayerData(_playerData);
+                GameManager.Instance.SetUpdatedPlayerData(_playerData);
             }
         }
         

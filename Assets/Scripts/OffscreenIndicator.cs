@@ -1,3 +1,4 @@
+using Data;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -34,6 +35,12 @@ public class OffscreenIndicator : MonoBehaviour
         // Set the initial scale of the indicator
         Indicator.localScale = Vector3.one * IndicatorScale;
     }
+    
+    public void SetIndicatorData(VehicleData data)
+    {
+        Image image = GetComponent<Image>();
+        image.sprite = data.indicatorIcon;
+    }
 
     void ResolveReferences()
     {
@@ -61,7 +68,6 @@ public class OffscreenIndicator : MonoBehaviour
         if (Target == null)
         {
             // Try to find the target in the parent object
-            Target = transform.parent;
             if (Target == null)
             {
                 Debug.LogError("OffscreenIndicator: No target found. Please assign a target.");
@@ -85,15 +91,17 @@ public class OffscreenIndicator : MonoBehaviour
 
         if (isOffScreen)
         {
-            // Enable the indicator
             Indicator.gameObject.SetActive(true);
 
-            // Corrected: Direction should be from screen center to target
-            Vector3 direction = (screenPos - new Vector3(0.5f, 0.5f, screenPos.z)).normalized;
+            // Direction from screen center to target
+            Vector3 screenCenter = new Vector3(0.5f, 0.5f, 0);
+            Vector3 direction = (screenPos - screenCenter).normalized;
 
-            // Corrected: Rotate the UI arrow towards the target
+            // Calculate rotation angle (ensure it points correctly)
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            Indicator.rotation = Quaternion.Euler(0, 0, angle - 90); // Adjusting to align with UI forward axis
+
+            // If the new image needs a different alignment, adjust this value
+            Indicator.rotation = Quaternion.Euler(0, 0, angle);
 
             // Clamp position to screen edges with padding
             screenPos.x = Mathf.Clamp(screenPos.x, 0.05f, 0.95f);
@@ -113,9 +121,9 @@ public class OffscreenIndicator : MonoBehaviour
         }
         else
         {
-            // Disable the indicator when the target is on-screen
             Indicator.gameObject.SetActive(false);
         }
     }
+
 
 }

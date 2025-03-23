@@ -1,8 +1,9 @@
+using System;
 using Configs;
+using Data;
 using DG.Tweening;
 using Managers;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Controllers
 {
@@ -14,36 +15,59 @@ namespace Controllers
         private Vector3 _targetPosition;
         private bool _isMoving = false;
         private bool _isScareCar = false;
+        private bool _wasOnScreen = false; // Track if the car was previously on screen
         private GameObject _indicator;
 
         [SerializeField] private float destroyDelay = 1f;
         [SerializeField] private Ease rotateEase = Ease.OutSine;
+        
+        [Header("Data Configs")]
         [SerializeField] private VehicleDataRewardConfig vehicleDataRewardConfig;
+        [SerializeField] private VehicleDataConfig vehicleData;
+        
+        [Header("Controllers")]
+        private VehicleAudioController _vehicleAudioController;
+        private VehicleEmojiTransformController _vehicleEmojiTransformController;
+        
+        public event Action OnCarEnteredScreen; // Event when car enters screen space
+        public event Action OnCarExitedScreen;  // Event when car exits screen space
+        
+        private GameObject _currentEmoji; // Reference to the instantiated emoji
 
         public OffscreenIndicatorManager offscreenIndicatorManager;
         
         public VehicleDataRewardConfig GetVehicleDataRewardConfig() => vehicleDataRewardConfig;
+        public VehicleDataConfig GetVehicleData() => vehicleData;
 
         void Start()
         {
+            //Controller Initialization
+            ControllersInit();
+            
             GameEventManager.OnFailedJump += HandlePlayerCollision;
-            _carController = GetComponent<PrometeoCarController>();
 
             if (_carController == null)
             {
                 Debug.LogError("Car controller is null!");
                 return;
             }
-
-            InitializeMovement();
-
             if (offscreenIndicatorManager != null)
             {
                 _indicator = offscreenIndicatorManager.CreateIndicator(transform);
+                _indicator.GetComponent<OffscreenIndicator>().SetIndicatorData(vehicleData.vehicleData);
             }
-
-            _isMoving = true;
+            InitializeMovement();
         }
+
+        private void ControllersInit()
+        {
+            _carController = GetComponent<PrometeoCarController>();
+            _vehicleEmojiTransformController = GetComponent<VehicleEmojiTransformController>();
+            _vehicleAudioController = GetComponent<VehicleAudioController>();
+        }
+        
+        public VehicleAudioController GetVehicleAudioController() => _vehicleAudioController;
+        public VehicleEmojiTransformController GetVehicleEmojiTransformController() => _vehicleEmojiTransformController;
 
         private void InitializeMovement()
         {
@@ -56,6 +80,7 @@ namespace Controllers
             }
 
             RotateTowards(_targetPosition);
+            _isMoving = true;
         }
 
         void Update()
@@ -69,9 +94,41 @@ namespace Controllers
             {
                 StopAndDestroy();
             }
+            
+            // Check screen space entry/exit events
+            CheckScreenSpaceEvents();
+        }
+        
+        private void CheckScreenSpaceEvents()
+        {
+            bool isCurrentlyOnScreen = IsVisibleOnScreen();
+
+            if (isCurrentlyOnScreen && !_wasOnScreen) // Only trigger when first entering
+            {
+                _wasOnScreen = true; // Mark as on-screen
+                OnCarEnteredScreen?.Invoke();
+            }
+            else if (!isCurrentlyOnScreen && _wasOnScreen) // Only trigger when exiting
+            {
+                _wasOnScreen = false; // Mark as off-screen
+                OnCarExitedScreen?.Invoke();
+            }
         }
 
 
+        
+        /// <summary>
+        /// Checks if the vehicle is visible on the main camera screen.
+        /// </summary>
+        private bool IsVisibleOnScreen()
+        {
+            if (Camera.main == null) return false;
+            
+            Vector3 screenPoint = Camera.main.WorldToViewportPoint(transform.position);
+            return screenPoint.x > 0 && screenPoint.x < 1 && screenPoint.y > 0 && screenPoint.z > 0;
+        }
+        
+        
         private void StopAndDestroy()
         {
             if (_carController is not null)
@@ -118,23 +175,10 @@ namespace Controllers
             _isScareCar = true;
         }
 
-        private void OnCarPassedPlayer()
-        {
-            if (_isScareCar)
-            {
-                ShowEmojiReaction();
-            }
-        }
-
-        private void ShowEmojiReaction()
-        {
-            Debug.Log("Show emoji reaction!");
-        }
 
         public void SetTarget(Vector3 targetPosition)
         {
             _targetPosition = targetPosition;
-            RotateTowards(_targetPosition); // Ensure correct rotation
         }
 
     }

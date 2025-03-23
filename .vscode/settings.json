@@ -61,7 +61,9 @@
         "Mathf",
         "Prefs",
         "Prometeo",
+        "Tweening",
         "UGUI"
     ],
-    "git.ignoreLimitWarning": true
+    "git.ignoreLimitWarning": true,
+    "dotnet.preferCSharpExtension": true
 }

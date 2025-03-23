@@ -1091,7 +1091,7 @@ MonoBehaviour:
   mainCamera: {fileID: 330585545}
   offscreenIndicatorPrefab: {fileID: 3580149948543152529, guid: d3a6514460261c540b038910c2930bc1, type: 3}
   targetCanvas: {fileID: 1830618229}
-  edgePadding: 50
+  edgePadding: 100
   indicatorScale: 1
 --- !u!1 &548545205
 GameObject:
@@ -3480,6 +3480,10 @@ PrefabInstance:
     - target: {fileID: 863449039066433634, guid: 58e9e93c8cf916a4bb39be23505ff2ae, type: 3}
       propertyPath: m_Name
       value: Clarie
+      objectReference: {fileID: 0}
+    - target: {fileID: 863449039066433634, guid: 58e9e93c8cf916a4bb39be23505ff2ae, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1281351156024278286, guid: 58e9e93c8cf916a4bb39be23505ff2ae, type: 3}
       propertyPath: m_LocalPosition.x
