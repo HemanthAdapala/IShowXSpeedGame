@@ -540,7 +540,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 3477542764195602122}
-  JumpTrigger: Jump
+  playerAnimationsDataConfig: {fileID: 11400000, guid: 6463c097b60d859488dead4aab750ad1, type: 2}
 --- !u!1 &894043855132389888
 GameObject:
   m_ObjectHideFlags: 0

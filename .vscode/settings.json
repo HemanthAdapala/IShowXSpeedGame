@@ -58,7 +58,9 @@
     },
     "dotnet.defaultSolution": "IShowXSpeed.sln",
     "cSpell.words": [
+        "Behaviour",
         "Mathf",
+        "Newtonsoft",
         "Prefs",
         "Prometeo",
         "Tweening",

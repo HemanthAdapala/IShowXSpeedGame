@@ -3,10 +3,7 @@ using UnityEngine;
 public class PlayerAnimator : MonoBehaviour
 {
     [SerializeField] private Animator animator;
-
-
-    [Header("Animation Parameters")]
-    public string JumpTrigger = "Jump";
+    [SerializeField] private PlayerAnimationsDataConfig playerAnimationsDataConfig;
 
     void Start()
     {
@@ -18,7 +15,15 @@ public class PlayerAnimator : MonoBehaviour
     {
         if (animator != null)
         {
-            animator.SetTrigger(JumpTrigger);
+            animator.SetTrigger(playerAnimationsDataConfig.GetRandomJumpAnimationTrigger());
+        }
+    }
+
+    public void TriggerCelebrationAnimation()
+    {
+        if (animator != null)
+        {
+            animator.SetTrigger(playerAnimationsDataConfig.GetRandomCelebrationAnimationTrigger());
         }
     }
 }

@@ -5451,6 +5451,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioSource: {fileID: 2276968443634280649}
+  baseAudioClip: {fileID: 8300000, guid: 771ce407ce807b74885ec23ebd1e6647, type: 3}
+  scareCarAudioClip: {fileID: 8300000, guid: 9427be6a2cf2cbd4e8e44cc42abe88e0, type: 3}
 --- !u!114 &4368388022781641167
 MonoBehaviour:
   m_ObjectHideFlags: 0

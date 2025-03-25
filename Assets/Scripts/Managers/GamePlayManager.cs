@@ -24,7 +24,7 @@ namespace Managers
                 Destroy(gameObject);
             }
         }
-        
+
         #endregion
 
         public GameConfig gameConfig;
@@ -34,7 +34,7 @@ namespace Managers
 
         private int _score = 0;
         private float _currentSpawnInterval;
-        
+
 
         public event EventHandler<VehicleSpawnedEventArgs> OnVehicleSpawned;
         public class VehicleSpawnedEventArgs : EventArgs
@@ -93,6 +93,20 @@ namespace Managers
                     vehicleController.SetScareMode();
                 }
             }
+
+            //Set Base car audio
+            VehicleAudioController vehicleAudioController = vehicle.GetComponent<VehicleAudioController>();
+            if (vehicleAudioController != null)
+            {
+                if (!isScareCar)
+                {
+                    vehicleAudioController.PlayBaseAudioClip();
+                }
+                else
+                {
+                    vehicleAudioController.PlayScareAudioClip();
+                }
+            }
         }
 
         private Vector3 GetRandomPositionOnCircle(float radius)
@@ -116,7 +130,7 @@ namespace Managers
             // Adjust the target position so it passes slightly near the center, but not directly at it
             return Vector3.zero + perpendicularOffset;
         }
-        
+
         public GameSessionData GetGameSessionData()
         {
             GameSessionData sessionData = GameSessionManager.Instance.GameSessionData;

@@ -6,8 +6,9 @@ namespace Configs
     public class GameConfig : ScriptableObject
     {
         [Header("Vehicle Settings")]
-        public float initialSpawnInterval = 2.0f; // Starting spawn rate
-        public float minSpawnInterval = 0.5f; // Minimum allowed spawn rate
+        public float initialSpawnInterval; // Starting spawn rate
+        public float minSpawnInterval; // Minimum allowed spawn rate
+        public float maxSpawnInterval; // Minimum allowed spawn rate
         public float spawnIntervalReductionFactor = 0.95f; // % reduction per streak
 
         public int initialVehicleSpeed = 20; // Base speed for vehicles

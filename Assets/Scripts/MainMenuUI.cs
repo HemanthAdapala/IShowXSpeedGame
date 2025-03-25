@@ -15,6 +15,8 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] private GameObject lobbyPanel;
     [SerializeField] private TMP_InputField nameInputField;
     [SerializeField] private Button submitNameButton;
+    [SerializeField] private Button leaderboardButton;
+    [SerializeField] private Transform leaderboardPanel;
     
     
     [Header("Lobby UI References")]
@@ -30,14 +32,32 @@ public class MainMenuUI : MonoBehaviour
     private readonly string _loadingScene = "LoadingScene";
     private PlayerData _playerData;
 
+    private void Awake()
+    {
+        if(leaderboardPanel.gameObject.activeInHierarchy)
+        {
+            leaderboardPanel.gameObject.SetActive(false);
+        }
+    }
 
     private void OnEnable()
     {
         playButton.onClick.AddListener(OnClickPlayButton);
+        leaderboardButton.onClick.AddListener(OnClickLeaderboardButton);
         if (playerNameEnterPanel.activeInHierarchy)
         {
             playerNameEnterPanel.SetActive(false);
         }
+    }
+
+    private void OnClickLeaderboardButton()
+    {
+        if (!leaderboardPanel.gameObject.activeInHierarchy)
+        {
+            leaderboardPanel.gameObject.SetActive(true);
+            this.gameObject.SetActive(false);
+        }
+        
     }
 
     private void Start()

@@ -1,3 +1,4 @@
+using System;
 using Data;
 using Player;
 using Plugins;
@@ -9,31 +10,40 @@ namespace Managers
     {
         public static GameManager Instance { get; private set; }
         public PlayerData PlayerData { get; private set; }
-        public GameSessionData GameSessionData { get; private set; }
+        private GameSessionData GameSessionData { get; set; }
 
         private readonly string _rewardsUIScene = "RewardsUIScene";
 
 
-        private void Awake()
+        private async void Awake()
         {
-            if (Instance == null)
+            try
             {
-                Instance = this;
-                DontDestroyOnLoad(gameObject);
-                LoadPlayerData();
+                if (Instance == null)
+                {
+                    Instance = this;
+                    DontDestroyOnLoad(gameObject);
+                    LoadPlayerData();
+                }
+                else
+                {
+                    Destroy(gameObject);
+                }
             }
-            else
+            catch (Exception e)
             {
-                Destroy(gameObject);
+                // TODO handle exception
+                Debug.Log("Error: " + e);
             }
         }
+
 
         private void LoadPlayerData()
         {
             if (SaveSystem.SaveExists())
             {
                 PlayerData = SaveSystem.LoadPlayerData();
-                SceneLoader.LoadScene(_rewardsUIScene,true);
+                SceneLoader.LoadScene(_rewardsUIScene, true);
                 Debug.Log("✅ Player Data Loaded.");
             }
             else
@@ -46,7 +56,8 @@ namespace Managers
         public void CreateNewPlayer(string playerName)
         {
             var initialPlayerCoins = 1000;
-            PlayerData = new PlayerData(playerName, "Clarie", 1, 0, 1.0f, 0,0,0.0F,initialPlayerCoins);
+            PlayerData = new PlayerData(playerName, "Clarie", 1, 0, 1.0f, 0, 0, 0.0F, initialPlayerCoins);
+            LeaderboardManager.Instance.AddScore(PlayerData.bestScore);
             SavePlayerData();
         }
 
@@ -56,6 +67,7 @@ namespace Managers
             {
                 SaveSystem.SavePlayerData(PlayerData);
                 PlayerData = SaveSystem.LoadPlayerData();
+                Debug.Log("✅ Player Data Saved.");
             }
         }
 
@@ -75,7 +87,7 @@ namespace Managers
         {
             return GameSessionData;
         }
-        
+
         public PlayerData GetPlayerData()
         {
             return PlayerData;

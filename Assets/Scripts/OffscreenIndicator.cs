@@ -35,7 +35,7 @@ public class OffscreenIndicator : MonoBehaviour
         // Set the initial scale of the indicator
         Indicator.localScale = Vector3.one * IndicatorScale;
     }
-    
+
     public void SetIndicatorData(VehicleData data)
     {
         Image image = GetComponent<Image>();
@@ -72,6 +72,7 @@ public class OffscreenIndicator : MonoBehaviour
             {
                 Debug.LogError("OffscreenIndicator: No target found. Please assign a target.");
             }
+
         }
     }
 

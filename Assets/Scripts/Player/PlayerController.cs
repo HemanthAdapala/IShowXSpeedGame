@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Player
 {
-    [RequireComponent(typeof(PlayerAnimator),typeof(CapsuleCollider))]
+    [RequireComponent(typeof(PlayerAnimator), typeof(CapsuleCollider))]
     [RequireComponent(typeof(Animator))]
     public class PlayerController : MonoBehaviour
     {
@@ -29,11 +29,11 @@ namespace Player
         }
 
         #endregion
-        
+
         private bool _isJumping = false;
         private Vector3 _originalPosition;
         private Transform _currentTarget;
-    
+
         public float jumpHeight = 2f;
         public float jumpDuration = 0.5f;
         public float perfectJumpDistance = 1.5f;
@@ -44,7 +44,7 @@ namespace Player
         public event Action OnJumpPerfect;
         public event Action OnJumpLate;
 
-    
+
         [SerializeField] private Ease rotateEase;
         [SerializeField] private PlayerAnimator playerAnimator;
         public PlayerAnimator PlayerAnimator => playerAnimator;
@@ -62,7 +62,7 @@ namespace Player
             this.transform.position = _originalPosition;
             GamePlayManager.Instance.OnVehicleSpawned += OnVehicleSpawned;
             GameEventManager.OnFailedJump += HandlePlayerCollision;
-            
+
         }
 
         private void OnDestroy()
@@ -89,7 +89,7 @@ namespace Player
             // Calculate horizontal direction to target
             Vector3 direction = target.position - transform.position;
             direction.y = 0; // Ignore vertical difference
-            
+
             // Only rotate if there's a valid direction
             if (direction != Vector3.zero)
             {
@@ -102,8 +102,14 @@ namespace Player
         {
             if (Input.GetMouseButtonDown(0))
             {
+                ResetAllAnimations();
                 Jump();
             }
+        }
+
+        private void ResetAllAnimations()
+        {
+
         }
 
         void Jump()
@@ -111,7 +117,29 @@ namespace Player
             if (_isJumping) return;
 
             _isJumping = true;
-            playerAnimator?.TriggerJumpAnimation();
+            playerAnimator?.TriggerJumpAnimation(); // Play animation first
+
+            //StartJumpMovement();
+            // // Add a small delay before movement (sync with animation)
+            // float animationDelay = 0.1f; // Adjust this based on your animation
+            // DOVirtual.DelayedCall(animationDelay, () =>
+            // {
+            //     CheckJumpTiming();
+
+            //     transform.DOMoveY(_originalPosition.y + jumpHeight, jumpDuration / 2)
+            //         .SetEase(Ease.OutQuad)
+            //         .OnComplete(() =>
+            //         {
+            //             transform.DOMoveY(_originalPosition.y, jumpDuration / 2)
+            //                 .SetEase(Ease.InQuad)
+            //                 .OnComplete(ResetValues);
+            //         });
+            // });
+        }
+
+        //Start JumpMovement based on ANIMATION EVENT
+        public void StartJumpMovement()
+        {
             CheckJumpTiming();
 
             transform.DOMoveY(_originalPosition.y + jumpHeight, jumpDuration / 2)
@@ -124,9 +152,10 @@ namespace Player
                 });
         }
 
+
         private void ResetValues()
         {
-            Debug.Log("Player collision detected_PlayerConroller!");
+            Debug.Log("Player collision detected_PlayerController!");
             _isJumping = false;
             _currentTarget = null;
         }
