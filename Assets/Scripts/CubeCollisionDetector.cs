@@ -1,8 +1,5 @@
-using System;
-using Configs;
 using Controllers;
 using Managers;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class CubeCollisionDetector : MonoBehaviour

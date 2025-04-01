@@ -11,10 +11,6 @@ namespace Controllers
         [SerializeField] private Transform emojiParentTransform;
         [SerializeField] private GameObject emojiPrefab = null;
 
-        [Header("Audio")]
-        [SerializeField] private AudioClip emojiSound = null;
-        
-        private VehicleAudioController _vehicleAudioController;
         private GameObject _currentEmoji;
         private VehicleController _vehicleController;
         private VehicleDataConfig _vehicleDataConfig;
@@ -22,7 +18,6 @@ namespace Controllers
         void Start()
         {
             _vehicleController = GetComponent<VehicleController>();
-            _vehicleAudioController = _vehicleController.GetVehicleAudioController();
             _vehicleController.OnCarEnteredScreen += OnCarEnteredScreen;
             _vehicleController.OnCarExitedScreen += OnCarExitedScreen;
             _vehicleDataConfig = _vehicleController.GetVehicleData();
@@ -34,8 +29,7 @@ namespace Controllers
         {
             var vehicleEmojiData = _vehicleDataConfig.GetRandomEmoji();
             emojiPrefab = vehicleEmojiData.emoji;
-            emojiSound = vehicleEmojiData.audioClip;
-            
+
             if (emojiPrefab == null || emojiParentTransform == null)
             {
                 Debug.LogError("Emoji prefab or parent transform is missing!");
@@ -52,11 +46,6 @@ namespace Controllers
 
             _currentEmoji.SetActive(true);
 
-            //Play emoji sound effect
-            if (emojiSound != null)
-            {
-                _vehicleAudioController.PlayAudioClip(emojiSound);
-            }
 
             // Play emoji particle effect
             ParticleSystem emojiParticles = _currentEmoji.GetComponent<ParticleSystem>();
@@ -75,10 +64,7 @@ namespace Controllers
 
         private void OnCarExitedScreen()
         {
-            if (emojiSound != null)
-            {
-                _vehicleAudioController.StopAudioClip();
-            }
+
         }
 
         private void OnDestroy()

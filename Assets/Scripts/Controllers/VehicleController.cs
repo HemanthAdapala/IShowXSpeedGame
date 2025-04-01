@@ -15,27 +15,31 @@ namespace Controllers
         private Vector3 _targetPosition;
         private bool _isMoving = false;
         private bool _isScareCar = false;
+        public bool IsScareCar => _isScareCar;
         private bool _wasOnScreen = false; // Track if the car was previously on screen
         private GameObject _indicator;
 
         [SerializeField] private float destroyDelay = 1f;
         [SerializeField] private Ease rotateEase = Ease.OutSine;
-        
+
         [Header("Data Configs")]
         [SerializeField] private VehicleDataRewardConfig vehicleDataRewardConfig;
         [SerializeField] private VehicleDataConfig vehicleData;
-        
+
         [Header("Controllers")]
         private VehicleAudioController _vehicleAudioController;
         private VehicleEmojiTransformController _vehicleEmojiTransformController;
-        
+
         public event Action OnCarEnteredScreen; // Event when car enters screen space
         public event Action OnCarExitedScreen;  // Event when car exits screen space
-        
+
+        public event Action OnVehicleDestroyed; // Event when vehicle is destroyed
+        public event Action OnVehicleReachedDestination; // Event when vehicle reaches its target
+
         private GameObject _currentEmoji; // Reference to the instantiated emoji
 
         public OffscreenIndicatorManager offscreenIndicatorManager;
-        
+
         public VehicleDataRewardConfig GetVehicleDataRewardConfig() => vehicleDataRewardConfig;
         public VehicleDataConfig GetVehicleData() => vehicleData;
 
@@ -43,7 +47,7 @@ namespace Controllers
         {
             //Controller Initialization
             ControllersInit();
-            
+
             GameEventManager.OnFailedJump += HandlePlayerCollision;
 
             if (_carController == null)
@@ -65,7 +69,7 @@ namespace Controllers
             _vehicleEmojiTransformController = GetComponent<VehicleEmojiTransformController>();
             _vehicleAudioController = GetComponent<VehicleAudioController>();
         }
-        
+
         public VehicleAudioController GetVehicleAudioController() => _vehicleAudioController;
         public VehicleEmojiTransformController GetVehicleEmojiTransformController() => _vehicleEmojiTransformController;
 
@@ -94,11 +98,11 @@ namespace Controllers
             {
                 StopAndDestroy();
             }
-            
+
             // Check screen space entry/exit events
             CheckScreenSpaceEvents();
         }
-        
+
         private void CheckScreenSpaceEvents()
         {
             bool isCurrentlyOnScreen = IsVisibleOnScreen();
@@ -116,19 +120,19 @@ namespace Controllers
         }
 
 
-        
+
         /// <summary>
         /// Checks if the vehicle is visible on the main camera screen.
         /// </summary>
         private bool IsVisibleOnScreen()
         {
             if (Camera.main == null) return false;
-            
+
             Vector3 screenPoint = Camera.main.WorldToViewportPoint(transform.position);
             return screenPoint.x > 0 && screenPoint.x < 1 && screenPoint.y > 0 && screenPoint.z > 0;
         }
-        
-        
+
+
         private void StopAndDestroy()
         {
             if (_carController is not null)
@@ -142,6 +146,7 @@ namespace Controllers
             {
                 offscreenIndicatorManager.DestroyIndicator(_indicator);
             }
+            OnVehicleReachedDestination?.Invoke();
 
             Destroy(gameObject, destroyDelay);
         }
@@ -161,6 +166,7 @@ namespace Controllers
         private void HandlePlayerCollision()
         {
             Debug.Log("Player collision detected_VehicleController!");
+            OnVehicleDestroyed?.Invoke();
             Destroy(gameObject);
             if (Camera.main != null) Camera.main.transform.DOShakePosition(0.5f, 0.5f, 10, 90, false, true);
         }

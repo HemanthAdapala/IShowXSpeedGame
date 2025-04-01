@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: ClarieAnimationsDataConfig
   m_EditorClassIdentifier: 
   JumpTrigger:
-  - JoyfulJump
+  - SpeedJump
+  - BackwardsJump
   CelebrationAnimationTriggers:
   - Taunt

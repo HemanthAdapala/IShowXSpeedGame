@@ -35,11 +35,13 @@ namespace Managers
         private int _score = 0;
         private float _currentSpawnInterval;
 
+        [SerializeField] private bool shouldSpawn = true;
+
 
         public event EventHandler<VehicleSpawnedEventArgs> OnVehicleSpawned;
         public class VehicleSpawnedEventArgs : EventArgs
         {
-            public PrometeoCarController CarController;
+            public VehicleController CarController;
         }
 
         private void Start()
@@ -52,7 +54,10 @@ namespace Managers
         {
             while (true)
             {
-                SpawnVehicle();
+                if (shouldSpawn)
+                {
+                    SpawnVehicle();
+                }
                 yield return new WaitForSeconds(_currentSpawnInterval);
             }
         }
@@ -70,8 +75,8 @@ namespace Managers
             GameObject vehicle = Instantiate(vehiclePrefab, spawnPosition, Quaternion.identity, transform);
 
             ConfigureVehicle(vehicle, targetPosition, isScareCar);
-
-            OnVehicleSpawned?.Invoke(this, new VehicleSpawnedEventArgs { CarController = vehicle.GetComponent<PrometeoCarController>() });
+            var vehicleController = vehicle.GetComponent<VehicleController>();
+            OnVehicleSpawned?.Invoke(this, new VehicleSpawnedEventArgs { CarController = vehicleController });
         }
 
         private void ConfigureVehicle(GameObject vehicle, Vector3 targetPosition, bool isScareCar)
@@ -91,20 +96,6 @@ namespace Managers
                 if (isScareCar)
                 {
                     vehicleController.SetScareMode();
-                }
-            }
-
-            //Set Base car audio
-            VehicleAudioController vehicleAudioController = vehicle.GetComponent<VehicleAudioController>();
-            if (vehicleAudioController != null)
-            {
-                if (!isScareCar)
-                {
-                    vehicleAudioController.PlayBaseAudioClip();
-                }
-                else
-                {
-                    vehicleAudioController.PlayScareAudioClip();
                 }
             }
         }

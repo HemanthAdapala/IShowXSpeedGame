@@ -1,173 +1,190 @@
-using System;
+using System.Collections.Generic;
+using Controllers;
 using DG.Tweening;
 using Managers;
+using Player;
 using UnityEngine;
 
-namespace Player
+[RequireComponent(typeof(PlayerAnimator), typeof(CharacterController),typeof(PlayerInputHandler))]
+public class PlayerController : MonoBehaviour
 {
-    [RequireComponent(typeof(PlayerAnimator), typeof(CapsuleCollider))]
-    [RequireComponent(typeof(Animator))]
-    public class PlayerController : MonoBehaviour
+    #region Singleton Implementation
+    private static PlayerController _instance;
+    public static PlayerController Instance => _instance;
+
+    private void Awake()
     {
-        #region Singleton
-
-        private static PlayerController _instance;
-        public static PlayerController Instance => _instance;
-
-        private void Awake()
+        if (_instance != null && _instance != this)
         {
-            if (_instance == null)
-            {
-                _instance = this;
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
-
-            _originalPosition = transform.position;
+            Destroy(gameObject);
+            return;
         }
 
-        #endregion
+        _instance = this;
+        Initialize();
+    }
+    #endregion
 
-        private bool _isJumping = false;
-        private Vector3 _originalPosition;
-        private Transform _currentTarget;
+    [Header("Movement Settings")]
+    [SerializeField] private Ease rotateEase = Ease.OutQuad;
 
-        public float jumpHeight = 2f;
-        public float jumpDuration = 0.5f;
-        public float perfectJumpDistance = 1.5f;
-        public float earlyJumpThreshold = 2f;
-        public float lateJumpThreshold = 1f;
+    [Header("Dependencies")]
+    [SerializeField] private PlayerAnimator playerAnimator;
+    [SerializeField] private PlayerParticleEffectsHandler playerParticleEffectsHandler;
 
-        public event Action OnJumpEarly;
-        public event Action OnJumpPerfect;
-        public event Action OnJumpLate;
+    private Vector3 _originalPosition;
+    private Transform _currentTarget;
+    private VehicleController _currentVehicleController;
+    private Queue<VehicleController> _vehicleQueue;
 
+    public Transform CurrentTarget => _currentTarget;
+    public PlayerAnimator PlayerAnimator => playerAnimator;
+    public PlayerParticleEffectsHandler PlayerParticleEffectsHandler => playerParticleEffectsHandler;
 
-        [SerializeField] private Ease rotateEase;
-        [SerializeField] private PlayerAnimator playerAnimator;
-        public PlayerAnimator PlayerAnimator => playerAnimator;
-        [SerializeField] private PlayerParticleEffectsHandler playerParticleEffectsHandler;
-        public PlayerParticleEffectsHandler PlayerParticleEffectsHandler => playerParticleEffectsHandler;
+    private void Initialize()
+    {
+        _originalPosition = transform.position;
+        _vehicleQueue = new Queue<VehicleController>();
+        CacheComponents();
+    }
 
-        void Start()
-        {
-            if (playerAnimator == null)
-                playerAnimator = GetComponent<PlayerAnimator>();
+    private void CacheComponents()
+    {
+        if (playerAnimator == null) playerAnimator = GetComponent<PlayerAnimator>();
+        if (playerParticleEffectsHandler == null)
+            playerParticleEffectsHandler = GetComponentInChildren<PlayerParticleEffectsHandler>();
+    }
 
-            if (playerParticleEffectsHandler == null)
-                playerParticleEffectsHandler = GetComponentInChildren<PlayerParticleEffectsHandler>();
+    private void Start()
+    {
+        RegisterEventHandlers();
+        ResetToStartPosition();
+    }
 
-            this.transform.position = _originalPosition;
+    private void RegisterEventHandlers()
+    {
+        if (GamePlayManager.Instance != null)
             GamePlayManager.Instance.OnVehicleSpawned += OnVehicleSpawned;
-            GameEventManager.OnFailedJump += HandlePlayerCollision;
 
-        }
+        GameEventManager.OnFailedJump += HandleFailedJump;
+    }
 
-        private void OnDestroy()
+    private void OnDestroy()
+    {
+        UnregisterEventHandlers();
+        ClearCurrentTarget();
+        _vehicleQueue?.Clear();
+    }
+
+    private void UnregisterEventHandlers()
+    {
+        if (GamePlayManager.Instance != null)
+            GamePlayManager.Instance.OnVehicleSpawned -= OnVehicleSpawned;
+
+        GameEventManager.OnFailedJump -= HandleFailedJump;
+    }
+
+    private void ResetToStartPosition()
+    {
+        transform.position = _originalPosition;
+    }
+
+    private void OnVehicleSpawned(object sender, GamePlayManager.VehicleSpawnedEventArgs e)
+    {
+        if (e?.CarController == null) return;
+
+        _vehicleQueue.Enqueue(e.CarController);
+        ProcessNextVehicleIfIdle();
+    }
+
+    private void ProcessNextVehicleIfIdle()
+    {
+        if (_currentTarget == null)
+            ProcessNextVehicle();
+    }
+
+    private void ProcessNextVehicle()
+    {
+        ClearCurrentTarget();
+
+        while (_vehicleQueue.Count > 0)
         {
-            GameEventManager.OnFailedJump -= HandlePlayerCollision;
-        }
-
-        private void HandlePlayerCollision()
-        {
-            ResetValues();
-        }
-
-        private void OnVehicleSpawned(object sender, GamePlayManager.VehicleSpawnedEventArgs e)
-        {
-            if (_currentTarget is null)
+            var nextVehicle = _vehicleQueue.Dequeue();
+            if (IsValidVehicle(nextVehicle))
             {
-                _currentTarget = e.CarController.transform;
-                RotateTowardsTarget(_currentTarget);
+                SetCurrentTarget(nextVehicle);
+                return;
             }
         }
+    }
 
-        private void RotateTowardsTarget(Transform target)
+    private bool IsValidVehicle(VehicleController vehicle)
+    {
+        return vehicle != null && vehicle.gameObject.activeInHierarchy;
+    }
+
+    private void SetCurrentTarget(VehicleController vehicle)
+    {
+        _currentTarget = vehicle.transform;
+        _currentVehicleController = vehicle;
+
+        vehicle.OnVehicleDestroyed += OnCurrentVehicleCompleted;
+        vehicle.OnVehicleReachedDestination += OnCurrentVehicleCompleted;
+
+        RotateTowardsTarget(_currentTarget);
+    }
+
+    private void ClearCurrentTarget()
+    {
+        if (_currentVehicleController == null) return;
+
+        _currentVehicleController.OnVehicleDestroyed -= OnCurrentVehicleCompleted;
+        _currentVehicleController.OnVehicleReachedDestination -= OnCurrentVehicleCompleted;
+
+        _currentTarget = null;
+        _currentVehicleController = null;
+    }
+
+    private void OnCurrentVehicleCompleted()
+    {
+        ProcessNextVehicle();
+    }
+
+    private void RotateTowardsTarget(Transform target)
+    {
+        if (target == null || !target.gameObject.activeInHierarchy) return;
+
+        Vector3 direction = target.position - transform.position;
+        direction.y = 0;
+
+        if (direction != Vector3.zero)
         {
-            // Calculate horizontal direction to target
-            Vector3 direction = target.position - transform.position;
-            direction.y = 0; // Ignore vertical difference
-
-            // Only rotate if there's a valid direction
-            if (direction != Vector3.zero)
-            {
-                Quaternion targetRotation = Quaternion.LookRotation(direction);
-                transform.DORotateQuaternion(targetRotation, 0.5f).SetEase(rotateEase);
-            }
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            transform.DORotateQuaternion(targetRotation, 0.5f).SetEase(rotateEase);
         }
+    }
 
-        void Update()
+    private void HandleFailedJump()
+    {
+        ResetState();
+    }
+
+    private void ResetState()
+    {
+        ClearCurrentTarget();
+        ProcessNextVehicle();
+    }
+
+    private void Update()
+    {
+        ValidateCurrentTarget();
+    }
+
+    private void ValidateCurrentTarget()
+    {
+        if (_currentTarget != null && !_currentTarget.gameObject.activeInHierarchy)
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                ResetAllAnimations();
-                Jump();
-            }
-        }
-
-        private void ResetAllAnimations()
-        {
-
-        }
-
-        void Jump()
-        {
-            if (_isJumping) return;
-
-            _isJumping = true;
-            playerAnimator?.TriggerJumpAnimation(); // Play animation first
-
-            //StartJumpMovement();
-            // // Add a small delay before movement (sync with animation)
-            // float animationDelay = 0.1f; // Adjust this based on your animation
-            // DOVirtual.DelayedCall(animationDelay, () =>
-            // {
-            //     CheckJumpTiming();
-
-            //     transform.DOMoveY(_originalPosition.y + jumpHeight, jumpDuration / 2)
-            //         .SetEase(Ease.OutQuad)
-            //         .OnComplete(() =>
-            //         {
-            //             transform.DOMoveY(_originalPosition.y, jumpDuration / 2)
-            //                 .SetEase(Ease.InQuad)
-            //                 .OnComplete(ResetValues);
-            //         });
-            // });
-        }
-
-        //Start JumpMovement based on ANIMATION EVENT
-        public void StartJumpMovement()
-        {
-            CheckJumpTiming();
-
-            transform.DOMoveY(_originalPosition.y + jumpHeight, jumpDuration / 2)
-                .SetEase(Ease.OutQuad)
-                .OnComplete(() =>
-                {
-                    transform.DOMoveY(_originalPosition.y, jumpDuration / 2)
-                        .SetEase(Ease.InQuad)
-                        .OnComplete(ResetValues);
-                });
-        }
-
-
-        private void ResetValues()
-        {
-            Debug.Log("Player collision detected_PlayerController!");
-            _isJumping = false;
-            _currentTarget = null;
-        }
-
-        void CheckJumpTiming()
-        {
-            if (_currentTarget is null) return;
-
-            float distanceToVehicle = Vector3.Distance(transform.position, _currentTarget.position);
-            if (distanceToVehicle >= earlyJumpThreshold) OnJumpEarly?.Invoke();
-            else if (distanceToVehicle <= lateJumpThreshold) OnJumpLate?.Invoke();
-            else OnJumpPerfect?.Invoke();
+            OnCurrentVehicleCompleted();
         }
     }
 }
