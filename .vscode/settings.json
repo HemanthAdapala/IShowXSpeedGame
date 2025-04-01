@@ -59,10 +59,14 @@
     "dotnet.defaultSolution": "IShowXSpeed.sln",
     "cSpell.words": [
         "Behaviour",
+        "Favourites",
+        "Lerp",
         "Mathf",
         "Newtonsoft",
+        "Playmode",
         "Prefs",
         "Prometeo",
+        "Rigidbody",
         "Tweening",
         "UGUI"
     ],
