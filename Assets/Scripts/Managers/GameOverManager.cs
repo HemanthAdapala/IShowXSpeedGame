@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -5,8 +6,8 @@ namespace Managers
 {
     public class GameOverManager : Singleton<GameOverManager>
     {
-        public int maxLives = 3; // Configurable number of lives
-        private int _currentLives; // Current lives
+        protected int maxLives = 3; // Configurable number of lives
+        protected int _currentLives; // Current lives
         
 
         public int GetCurrentLives()
@@ -48,6 +49,13 @@ namespace Managers
         {
             Debug.Log("🛑 Game Over!");
             GameManager.Instance.SaveGameSession();
+            GameEventManager.TriggerGameEnd();
+            StartCoroutine(LoadGameOverScene());
+        }
+
+        private IEnumerator LoadGameOverScene()
+        {
+            yield return new WaitForSeconds(3f);
             SceneManager.LoadScene(GameOverScene);
         }
     }

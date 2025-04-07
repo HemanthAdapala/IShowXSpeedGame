@@ -17,7 +17,11 @@ namespace Managers
         public static event Action<float> OnMultiplierUpdated;
         // Event for when Score is updated
         public static event Action<int> OnScoreUpdated;
-        
+        // Event for when the game ends
+        public static event Action OnGameEnd;
+        // Event for when the vehicle collides with the player
+        public static event Action OnVehicleCollision;
+
 
         public static void TriggerSuccessfulJump(VehicleDataRewardConfig vehicleRewardConfig)
         {
@@ -48,6 +52,17 @@ namespace Managers
         {
             Debug.Log("📢 Event Triggered: Score Updated");
             OnScoreUpdated?.Invoke(score);
+        }
+
+        public static void TriggerGameEnd()
+        {
+            Debug.Log("📢 Event Triggered: Game End");
+            OnGameEnd?.Invoke();
+        }
+        public static void TriggerVehicleCollision()
+        {
+            Debug.Log("📢 Event Triggered: Vehicle Collision");
+            OnVehicleCollision?.Invoke();
         }
 
     }

@@ -1,3 +1,4 @@
+using System;
 using Configs;
 using Data;
 using Player;
@@ -35,7 +36,7 @@ namespace Managers
         private void OnEnable()
         {
             _playerData = GameManager.Instance.GetPlayerData();
-            _gameSessionData = new GameSessionData(0, 0, 0, 0, 0);
+            _gameSessionData = new GameSessionData(0, 0, 0, 0, 0, 0, 0);
             GameEventManager.OnStreakUpdated += OnStreakUpdated_GameEventManager;
             GameEventManager.OnScoreUpdated += OnScoreUpdated_GameEventManager;
             GameEventManager.OnMultiplierUpdated += OnMultiplierUpdated_GameEventManager;
@@ -52,9 +53,20 @@ namespace Managers
         
         private void OnStreakUpdated_GameEventManager(int value)
         {
+            SaveCurrentStreak(value);
             SaveMaxStreak(value);
         }
-        
+
+        private void SaveCurrentStreak(int value)
+        {
+            _gameSessionData.CurrentStreak = value;
+        }
+
+        public int GetCurrentStreak()
+        {
+            return _gameSessionData.CurrentStreak;
+        }
+
         private void SaveMaxStreak(int currentStreak)
         {
             if(currentStreak >= _gameSessionData.MaxStreak) _gameSessionData.MaxStreak = currentStreak;
@@ -67,9 +79,15 @@ namespace Managers
         
         private void OnMultiplierUpdated_GameEventManager(float value)
         {
+            SaveCurrentMultiplier(value);
             SaveMaxMultiplier(value);
         }
-        
+
+        private void SaveCurrentMultiplier(float value)
+        {
+            _gameSessionData.CurrentMultiplier = value;
+        }
+
         private void SaveMaxMultiplier(float currentMultiplier)
         {
             if(currentMultiplier >= _gameSessionData.MaxMultiplier) _gameSessionData.MaxMultiplier = currentMultiplier;

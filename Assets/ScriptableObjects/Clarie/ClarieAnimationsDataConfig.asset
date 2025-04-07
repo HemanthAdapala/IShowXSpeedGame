@@ -17,3 +17,6 @@ MonoBehaviour:
   - BackwardsJump
   CelebrationAnimationTriggers:
   - Taunt
+  DeathAnimationTriggers:
+  - Death
+  - FlyingDeath

@@ -1,4 +1,5 @@
 using System;
+using Managers;
 using UnityEngine;
 
 [RequireComponent(typeof(Animator), typeof(CharacterController))]
@@ -41,6 +42,7 @@ public class PlayerAnimator : MonoBehaviour
     private int _animIDFreeFall;
     private int _animIDMotionSpeed;
     private int _animIDIdle;
+    private int _animIDDeath;
 
     // Physics state
     private float _jumpTimeoutDelta;
@@ -56,6 +58,31 @@ public class PlayerAnimator : MonoBehaviour
     {
         CacheComponents();
         CacheAnimationIDs();
+    }
+
+    private void Start()
+    {
+        GameEventManager.OnFailedJump += OnHitByVehicle;
+        GameEventManager.OnGameEnd += OnGameEndEvent;
+    }
+
+    private void OnGameEndEvent()
+    {
+        _animIDDeath = 0;
+        string deathAnimation = animationsConfig.GetRandomDeathAnimationTrigger();
+        _animIDDeath = Animator.StringToHash(deathAnimation);
+        _animator.SetTrigger("Death");
+    }
+
+    private void OnDestroy()
+    {
+        GameEventManager.OnFailedJump -= OnHitByVehicle;
+        GameEventManager.OnGameEnd -= OnGameEndEvent;
+    }
+
+    private void OnHitByVehicle()
+    {
+        _animator?.SetTrigger("OnHit");
     }
 
     private void CacheComponents()
@@ -168,7 +195,8 @@ public class PlayerAnimator : MonoBehaviour
         _verticalVelocity = Mathf.Max(_verticalVelocity, -2f);
 
         // Process jump input
-        if (Input.GetMouseButtonDown(0) && _jumpTimeoutDelta <= 0.0f)
+#if UNITY_EDITOR || UNITY_ANDROID
+        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space) && _jumpTimeoutDelta <= 0.0f)
         {
             // Calculate jump force from physics formula
             _verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
@@ -177,6 +205,7 @@ public class PlayerAnimator : MonoBehaviour
             CacheAnimationJumpId(randomJumpAnimationId);
             _animator.SetBool(_animIDJump, true);
         }
+#endif
 
         // Decrement jump timeout
         if (_jumpTimeoutDelta > 0.0f)

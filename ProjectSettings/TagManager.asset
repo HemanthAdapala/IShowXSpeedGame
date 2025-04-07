@@ -8,6 +8,7 @@ TagManager:
   - PlayerCollider
   - CenterCollider
   - Ground
+  - VehicleCollider
   layers:
   - Default
   - TransparentFX
@@ -18,7 +19,7 @@ TagManager:
   - Ground
   - 
   - Character Preview
-  - 
+  - ParticleEffects
   - 
   - 
   - 

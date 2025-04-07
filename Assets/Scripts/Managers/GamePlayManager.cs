@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using Configs;
 using Controllers;
 using Data;
@@ -27,106 +26,149 @@ namespace Managers
 
         #endregion
 
+        [Header("Configurations")]
         public GameConfig gameConfig;
         public GameVehiclesConfig gameVehiclesConfig;
+
+        [Header("References")]
         public OffscreenIndicatorManager indicatorManager;
-        public float radius = 5f;
+        public VehicleSpeedManager speedManager;
 
-        private int _score = 0;
-        private float _currentSpawnInterval;
-
+        [Header("Spawn Settings")]
+        [SerializeField] private float radius = 5f;
         [SerializeField] private bool shouldSpawn = true;
+        [SerializeField] private float spawnPositionVariance = 0.5f;
 
+        private float _currentSpawnInterval;
+        private float _nextSpawnTime;
 
-        public event EventHandler<VehicleSpawnedEventArgs> OnVehicleSpawned;
-        public class VehicleSpawnedEventArgs : EventArgs
-        {
-            public VehicleController CarController;
-        }
+        public event Action<VehicleController> OnVehicleSpawned;
 
         private void Start()
         {
-            _currentSpawnInterval = gameConfig.initialSpawnInterval;
-            StartCoroutine(SpawnVehicles());
+            InitializeGame();
         }
 
-        IEnumerator SpawnVehicles()
+        private void InitializeGame()
         {
-            while (true)
+            _currentSpawnInterval = gameConfig.initialSpawnInterval;
+            _nextSpawnTime = Time.time + _currentSpawnInterval;
+            speedManager.Initialize(gameConfig);
+        }
+
+        private void Update()
+        {
+            if (Time.time >= _nextSpawnTime && shouldSpawn)
             {
-                if (shouldSpawn)
-                {
-                    SpawnVehicle();
-                }
-                yield return new WaitForSeconds(_currentSpawnInterval);
+                SpawnVehicle();
+                UpdateSpawnInterval();
+                _nextSpawnTime = Time.time + _currentSpawnInterval;
             }
         }
 
         private void SpawnVehicle()
         {
-            GameObject vehiclePrefab = gameVehiclesConfig.GetVehiclePrefabForLevel(_score / 10);
+            GameObject vehiclePrefab = gameVehiclesConfig.GetVehicleForCurrentGameState(
+                GameSessionManager.Instance.GetCurrentStreak(),
+                speedManager.CurrentSpeed
+            );
+
             if (vehiclePrefab == null) return;
 
-            bool isScareCar = UnityEngine.Random.value < gameConfig.scareCarChance; // Configurable probability
-
+            bool isScareCar = UnityEngine.Random.value < gameConfig.scareCarChance;
             Vector3 spawnPosition = GetRandomPositionOnCircle(radius);
-            Vector3 targetPosition = isScareCar ? GetScareCarTarget(spawnPosition) : Vector3.zero;
 
             GameObject vehicle = Instantiate(vehiclePrefab, spawnPosition, Quaternion.identity, transform);
+            ConfigureVehicle(vehicle, spawnPosition, isScareCar);
 
-            ConfigureVehicle(vehicle, targetPosition, isScareCar);
             var vehicleController = vehicle.GetComponent<VehicleController>();
-            OnVehicleSpawned?.Invoke(this, new VehicleSpawnedEventArgs { CarController = vehicleController });
+            OnVehicleSpawned?.Invoke(vehicleController);
         }
 
-        private void ConfigureVehicle(GameObject vehicle, Vector3 targetPosition, bool isScareCar)
+        private void ConfigureVehicle(GameObject vehicle, Vector3 spawnPosition, bool isScareCar)
         {
-            PrometeoCarController carController = vehicle.GetComponent<PrometeoCarController>();
-            if (carController != null)
+            if (vehicle.TryGetComponent<PrometeoCarController>(out var carController))
             {
-                carController.maxSpeed = gameConfig.maxVehicleSpeed;
+                carController.maxSpeed = (int)speedManager.CurrentSpeed;
                 carController.accelerationMultiplier = gameConfig.accelerationMultiplier;
             }
 
-            VehicleController vehicleController = vehicle.GetComponent<VehicleController>();
-            if (vehicleController != null)
+            if (vehicle.TryGetComponent<VehicleController>(out var vehicleController))
             {
                 vehicleController.offscreenIndicatorManager = indicatorManager;
-                vehicleController.SetTarget(targetPosition);
+
                 if (isScareCar)
                 {
-                    vehicleController.SetScareMode();
+                    Vector3 normalDestination = -spawnPosition.normalized * radius;
+                    Vector3 scarePoint = GetScareOffsetFromCenter();
+                    vehicleController.SetScareCarPath(spawnPosition, scarePoint, normalDestination);
                 }
+                else
+                {
+                    vehicleController.SetTarget(-spawnPosition.normalized * radius);
+                }
+
+                vehicleController.OnVehicleDestroyed += HandleVehicleDestroyed;
+                vehicleController.OnVehicleReachedDestination += HandleVehiclePassed;
             }
+        }
+
+        private Vector3 GetScareOffsetFromCenter()
+        {
+            float lateralOffset = UnityEngine.Random.Range(
+                gameConfig.scareCarMinOffset,
+                gameConfig.scareCarMaxOffset
+            );
+            return new Vector3(
+                UnityEngine.Random.value > 0.5f ? lateralOffset : -lateralOffset,
+                0f,
+                UnityEngine.Random.value > 0.5f ? lateralOffset : -lateralOffset
+            );
         }
 
         private Vector3 GetRandomPositionOnCircle(float radius)
         {
             float angle = UnityEngine.Random.Range(0f, Mathf.PI * 2f);
+            float variance = UnityEngine.Random.Range(-spawnPositionVariance, spawnPositionVariance);
             return new Vector3(
-                Mathf.Cos(angle) * radius,
+                Mathf.Cos(angle) * (radius + variance),
                 0f,
-                Mathf.Sin(angle) * radius
+                Mathf.Sin(angle) * (radius + variance)
             );
         }
 
-        private Vector3 GetScareCarTarget(Vector3 spawnPosition)
+        private void UpdateSpawnInterval()
         {
-            Vector3 directionToCenter = (Vector3.zero - spawnPosition).normalized;
+            _currentSpawnInterval = Mathf.Max(
+                gameConfig.minSpawnInterval,
+                _currentSpawnInterval * Mathf.Pow(gameConfig.spawnIntervalReductionFactor, GameSessionManager.Instance.GetCurrentStreak())
+            );
+        }
 
-            // Move the target slightly to the side instead of directly to the player
-            float lateralOffset = UnityEngine.Random.Range(gameConfig.scareCarMinOffset, gameConfig.scareCarMaxOffset);
-            Vector3 perpendicularOffset = Vector3.Cross(directionToCenter, Vector3.up) * lateralOffset;
+        private void HandleVehicleDestroyed()
+        {
+            speedManager.OnJumpFailed();
+        }
 
-            // Adjust the target position so it passes slightly near the center, but not directly at it
-            return Vector3.zero + perpendicularOffset;
+        private void HandleVehiclePassed()
+        {
+            speedManager.OnSuccessfulJump();
+        }
+
+        private void OnDestroy()
+        {
+            // Clean up any remaining vehicles
+            var vehicles = FindObjectsOfType<VehicleController>();
+            foreach (var vehicle in vehicles)
+            {
+                vehicle.OnVehicleDestroyed -= HandleVehicleDestroyed;
+                vehicle.OnVehicleReachedDestination -= HandleVehiclePassed;
+            }
         }
 
         public GameSessionData GetGameSessionData()
         {
-            GameSessionData sessionData = GameSessionManager.Instance.GameSessionData;
-            return sessionData;
+            return GameSessionManager.Instance.GameSessionData;
         }
-
     }
 }

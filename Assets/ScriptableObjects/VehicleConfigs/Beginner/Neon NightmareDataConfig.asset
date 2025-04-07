@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b5908404e2678a4196ce32dd9affea8, type: 3}
+  m_Name: Neon NightmareDataConfig
+  m_EditorClassIdentifier: 
+  vehicleData:
+    tier: 0
+    vehicleName: RedCar
+    indicatorIcon: {fileID: 21300000, guid: 4482d49a65d388e47a90eefbe99eb963, type: 3}
+    emojiData:
+    - emoji: {fileID: 180600, guid: f276f55eadaf0e34ba03d5b43bfbfae0, type: 3}
+      audioClip: {fileID: 8300000, guid: 9427be6a2cf2cbd4e8e44cc42abe88e0, type: 3}
+    - emoji: {fileID: 1405008442520684, guid: ab9041fcf0d2ca5429b835df2786ef1e, type: 3}
+      audioClip: {fileID: 8300000, guid: 9427be6a2cf2cbd4e8e44cc42abe88e0, type: 3}
+    - emoji: {fileID: 1552573071691400, guid: 717a1835bfda9934fb8eb1a5ce0303aa, type: 3}
+      audioClip: {fileID: 8300000, guid: 9427be6a2cf2cbd4e8e44cc42abe88e0, type: 3}

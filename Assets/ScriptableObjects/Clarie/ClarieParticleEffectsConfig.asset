@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: ClarieParticleEffectsConfig
   m_EditorClassIdentifier: 
   bloodEffects:
-  - {fileID: 195360, guid: a3c24a5ae068ed44d950af671f99cc21, type: 3}
-  - {fileID: 142478, guid: 120d855bc18f7fa4f8c46575d5629105, type: 3}
-  - {fileID: 168136, guid: 47c6eee70f9391f46a710b0592491a63, type: 3}
+  - {fileID: 195360, guid: 4d2d2952e7b70544cb0790b207e3df99, type: 3}
+  - {fileID: 142478, guid: 271cb2b79ff2a554786bc0495eb1a222, type: 3}
+  - {fileID: 168136, guid: d5480cb640fe3924cb5b6be2a1ee2c46, type: 3}
   hitEffects:
-  - {fileID: 1269060166065924, guid: 1810168468ffe7b4db7f3c67e0743de4, type: 3}
-  - {fileID: 1883610838541854, guid: aa72280b4bb67cb468b0ffc37bcfc9c0, type: 3}
-  - {fileID: 1930644504616354, guid: be3a8d67cedf6394c995b869e16f4418, type: 3}
+  - {fileID: 1930644504616354, guid: 549d0279235c2ea41893ddbd22b82cfc, type: 3}
+  - {fileID: 1883610838541854, guid: e67bf2bd7b8587e408708ac78c48e263, type: 3}
+  - {fileID: 1269060166065924, guid: 428bea5bc00cd054b83d5314551e16d1, type: 3}
   jumpEffects: []

@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1639f2481fc45a46a1512c9a021ca8d, type: 3}
   m_Name: GameConfig
   m_EditorClassIdentifier: 
-  initialSpawnInterval: 5
-  minSpawnInterval: 0.5
-  maxSpawnInterval: 10
+  initialSpawnInterval: 10
+  minSpawnInterval: 2.5
+  maxSpawnInterval: 20
   spawnIntervalReductionFactor: 0.95
-  initialVehicleSpeed: 20
-  maxVehicleSpeed: 50
+  initialVehicleSpeed: 30
+  maxVehicleSpeed: 100
   speedIncreaseFactor: 1.05
   scareCarChance: 0.1
   scareCarMinOffset: 2

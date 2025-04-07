@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Controllers;
 using DG.Tweening;
@@ -79,22 +80,23 @@ public class PlayerController : MonoBehaviour
     private void UnregisterEventHandlers()
     {
         if (GamePlayManager.Instance != null)
+            //GamePlayManager.Instance.OnVehicleSpawned -= OnVehicleSpawned;
             GamePlayManager.Instance.OnVehicleSpawned -= OnVehicleSpawned;
 
+
         GameEventManager.OnFailedJump -= HandleFailedJump;
+    }
+
+    private void OnVehicleSpawned(VehicleController controller)
+    {
+        if(controller == null) return;
+        _vehicleQueue.Enqueue(controller);
+        ProcessNextVehicleIfIdle();
     }
 
     private void ResetToStartPosition()
     {
         transform.position = _originalPosition;
-    }
-
-    private void OnVehicleSpawned(object sender, GamePlayManager.VehicleSpawnedEventArgs e)
-    {
-        if (e?.CarController == null) return;
-
-        _vehicleQueue.Enqueue(e.CarController);
-        ProcessNextVehicleIfIdle();
     }
 
     private void ProcessNextVehicleIfIdle()
