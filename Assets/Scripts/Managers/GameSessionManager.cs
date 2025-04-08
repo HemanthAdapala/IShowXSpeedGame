@@ -93,11 +93,11 @@ namespace Managers
             if(currentMultiplier >= _gameSessionData.MaxMultiplier) _gameSessionData.MaxMultiplier = currentMultiplier;
         }
 
-        private void AwardXpAndCoins(VehicleDataRewardConfig vehicleRewardConfig)
+        private void AwardXpAndCoins(VehicleRewardData vehicleRewardData)
         {
-            if (vehicleRewardConfig == null) return;
+            if (vehicleRewardData == null) return;
 
-            var vehicleReward = vehicleRewardConfig.vehicleRewardData;
+            var vehicleReward = vehicleRewardData;
 
             _gameSessionData.SessionXp += vehicleReward.xp;
             _gameSessionData.SessionCoins += vehicleReward.coins;

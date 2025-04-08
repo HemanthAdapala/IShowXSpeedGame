@@ -16,7 +16,7 @@ MonoBehaviour:
   minSpawnInterval: 2.5
   maxSpawnInterval: 20
   spawnIntervalReductionFactor: 0.95
-  initialVehicleSpeed: 30
+  initialVehicleSpeed: 45
   maxVehicleSpeed: 100
   speedIncreaseFactor: 1.05
   scareCarChance: 0.1

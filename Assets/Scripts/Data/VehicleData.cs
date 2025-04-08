@@ -1,15 +1,21 @@
+using Configs;
+using System.Collections.Generic;
+using System;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Data
 {
     [System.Serializable]
     public class VehicleData
     {
-        public ChallengeTiers tier;
         public string vehicleName;
         public Sprite indicatorIcon;
+        public GameObject prefab;
+        public int unlockAtStreak = 0;
+        public float spawnWeight = 1f;
         public VehicleEmojiData[] emojiData;
+        public VehicleRewardData rewardData;
+        public VehicleEmojiData GetRandomEmoji() => emojiData[UnityEngine.Random.Range(0, emojiData.Length)];
     }
 
     [System.Serializable]
@@ -19,12 +25,26 @@ namespace Data
         public AudioClip audioClip;
     }
 
-    public enum ChallengeTiers
+    [System.Serializable]
+    public class VehicleRewardData
     {
-        Beginner,
-        Skilled,
-        Expert,
-        Extreme,
-        Insane
+        public int xp;
+        public int coins;
+    }
+    public enum VehicleType
+    {
+        Slow,
+        Normal,
+        Fast,
+        Special
+    }
+
+    [Serializable]
+    public class VehicleRawData
+    {
+        public VehicleType vehicleType;
+        public float minSpeed;
+        public float maxSpeed;
+        public List<VehicleDataConfig> vehicleDataConfigs;
     }
 }

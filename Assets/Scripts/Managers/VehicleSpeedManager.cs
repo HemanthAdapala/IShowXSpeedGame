@@ -9,6 +9,9 @@ namespace Managers
         private int _currentStreak;
         private float _currentSpeed;
 
+        private float _minSpeed;
+        private float _maxSpeed;
+
         public float CurrentSpeed => _currentSpeed;
         public int CurrentStreak => _currentStreak;
 
@@ -18,6 +21,17 @@ namespace Managers
             _currentSpeed = _config.initialVehicleSpeed;
             _currentStreak = GameSessionManager.Instance.GetCurrentStreak();
         }
+
+        public void Initialize(GameConfig config, float minSpeed, float maxSpeed)
+        {
+            _config = config;
+            _minSpeed = minSpeed;
+            _maxSpeed = maxSpeed;
+            _currentStreak = GameSessionManager.Instance.GetCurrentStreak();
+            _currentSpeed = _minSpeed;
+        }
+
+        
 
         public void OnSuccessfulJump()
         {
@@ -35,8 +49,8 @@ namespace Managers
         {
             float speedMultiplier = Mathf.Pow(_config.speedIncreaseFactor, _currentStreak);
             _currentSpeed = Mathf.Min(
-                _config.initialVehicleSpeed * speedMultiplier,
-                _config.maxVehicleSpeed
+                _minSpeed * speedMultiplier,
+                _maxSpeed
             );
         }
 

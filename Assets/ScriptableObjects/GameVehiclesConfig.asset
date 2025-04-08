@@ -12,16 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28713d04f7a143e4aa95e41b3261c70a, type: 3}
   m_Name: GameVehiclesConfig
   m_EditorClassIdentifier: 
-  vehicles:
-  - prefab: {fileID: 2015208511302027660, guid: 0bb61515d97036a4ca7c80dcd4d9666c, type: 3}
-    type: 0
-    unlockAtStreak: 0
-    spawnWeight: 0.1
-  - prefab: {fileID: 9133463331648199071, guid: 201ce709a0564b548811295236e0d6f3, type: 3}
-    type: 2
-    unlockAtStreak: 0
-    spawnWeight: 0.1
-  - prefab: {fileID: 2015208511302027660, guid: 0bb61515d97036a4ca7c80dcd4d9666c, type: 3}
-    type: 0
-    unlockAtStreak: 0
-    spawnWeight: 0.1
+  vehicleRawData:
+  - vehicleType: 0
+    minSpeed: 45
+    maxSpeed: 65
+    vehicleDataConfigs:
+    - {fileID: 11400000, guid: b36889958dc44134ebe754c7331edb04, type: 2}
+    - {fileID: 11400000, guid: 9dee51aaa15e7ac47bc8aef3cc77f3b8, type: 2}
+    - {fileID: 11400000, guid: 24b8f1c9873e0094ca17f71b8299cce4, type: 2}

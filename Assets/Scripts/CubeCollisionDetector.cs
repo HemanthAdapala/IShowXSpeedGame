@@ -15,8 +15,8 @@ public class CubeCollisionDetector : MonoBehaviour
         if (other.gameObject.CompareTag(CenterColliderTag))
         {
             Debug.Log("Vehicle passed center");
-            var vehicleRewardConfig = GetComponent<VehicleController>().GetVehicleDataRewardConfig();
-            GameEventManager.TriggerSuccessfulJump(vehicleRewardConfig);
+            var vehicleReward = GetComponent<VehicleController>().GetVehicleDataRewardConfig();
+            GameEventManager.TriggerSuccessfulJump(vehicleReward);
         }
     }
 

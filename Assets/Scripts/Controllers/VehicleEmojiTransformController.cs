@@ -2,6 +2,7 @@ using UnityEngine;
 using DG.Tweening;
 using System;
 using Configs;
+using Data;
 
 namespace Controllers
 {
@@ -13,21 +14,21 @@ namespace Controllers
 
         private GameObject _currentEmoji;
         private VehicleController _vehicleController;
-        private VehicleDataConfig _vehicleDataConfig;
+        private VehicleData _vehicleData;
 
         void Start()
         {
             _vehicleController = GetComponent<VehicleController>();
             _vehicleController.OnCarEnteredScreen += OnCarEnteredScreen;
             _vehicleController.OnCarExitedScreen += OnCarExitedScreen;
-            _vehicleDataConfig = _vehicleController.GetVehicleData();
+            _vehicleData = _vehicleController.GetVehicleData();
 
             InstantiateEmoji();
         }
 
         private void InstantiateEmoji()
         {
-            var vehicleEmojiData = _vehicleDataConfig.GetRandomEmoji();
+            var vehicleEmojiData = _vehicleData.GetRandomEmoji();
             emojiPrefab = vehicleEmojiData.emoji;
 
             if (emojiPrefab == null || emojiParentTransform == null)

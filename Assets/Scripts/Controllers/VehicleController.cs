@@ -25,10 +25,6 @@ namespace Controllers
         [SerializeField] private float destructionDistance = 2f;
         [SerializeField] private Ease rotateEase = Ease.OutSine;
 
-        [Header("Data Configs")]
-        [SerializeField] private VehicleDataRewardConfig vehicleDataRewardConfig;
-        [SerializeField] private VehicleDataConfig vehicleData;
-
         [Header("Controllers")]
         private VehicleAudioController _vehicleAudioController;
         private VehicleEmojiTransformController _vehicleEmojiTransformController;
@@ -39,6 +35,9 @@ namespace Controllers
         public event Action OnVehicleReachedDestination;
 
         public OffscreenIndicatorManager offscreenIndicatorManager;
+        [Header("Data Configs")]
+        [NonSerialized] public VehicleData vehicleData;
+
         public bool IsScareCar => _isScareCar;
 
         void Start()
@@ -55,7 +54,7 @@ namespace Controllers
             if (offscreenIndicatorManager != null)
             {
                 _indicator = offscreenIndicatorManager.CreateIndicator(transform);
-                _indicator.GetComponent<OffscreenIndicator>().SetIndicatorData(vehicleData.vehicleData);
+                _indicator.GetComponent<OffscreenIndicator>().SetIndicatorData(vehicleData);
             }
 
             InitializeMovement();
@@ -179,8 +178,8 @@ namespace Controllers
             GameEventManager.OnFailedJump -= HandlePlayerCollision;
         }
 
-        public VehicleDataRewardConfig GetVehicleDataRewardConfig() => vehicleDataRewardConfig;
-        public VehicleDataConfig GetVehicleData() => vehicleData;
+        public VehicleRewardData GetVehicleDataRewardConfig() => vehicleData.rewardData;
+        public VehicleData GetVehicleData() => vehicleData;
         public VehicleAudioController GetVehicleAudioController() => _vehicleAudioController;
         public VehicleEmojiTransformController GetVehicleEmojiTransformController() => _vehicleEmojiTransformController;
     }

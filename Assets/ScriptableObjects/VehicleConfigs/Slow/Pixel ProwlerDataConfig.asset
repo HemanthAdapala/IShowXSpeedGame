@@ -10,16 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4b5908404e2678a4196ce32dd9affea8, type: 3}
-  m_Name: Retro RumblerDataConfig
+  m_Name: Pixel ProwlerDataConfig
   m_EditorClassIdentifier: 
   vehicleData:
-    tier: 0
-    vehicleName: Retro Rumbler
-    indicatorIcon: {fileID: 21300000, guid: 4482d49a65d388e47a90eefbe99eb963, type: 3}
+    vehicleName: Pixel Prowler
+    indicatorIcon: {fileID: 21300000, guid: 91e83d65d54b35d4b962982f0efd1659, type: 3}
+    prefab: {fileID: 2015208511302027660, guid: 0bb61515d97036a4ca7c80dcd4d9666c, type: 3}
+    unlockAtStreak: 0
+    spawnWeight: 0.1
     emojiData:
-    - emoji: {fileID: 1801004341784822, guid: de89eb4d167e00b4fab157953b8d3894, type: 3}
-      audioClip: {fileID: 8300000, guid: 9427be6a2cf2cbd4e8e44cc42abe88e0, type: 3}
-    - emoji: {fileID: 1028507206187210, guid: 28765ba8fe1d7654aaf05bc05d3757bd, type: 3}
-      audioClip: {fileID: 8300000, guid: 9427be6a2cf2cbd4e8e44cc42abe88e0, type: 3}
     - emoji: {fileID: 180600, guid: f276f55eadaf0e34ba03d5b43bfbfae0, type: 3}
       audioClip: {fileID: 8300000, guid: 9427be6a2cf2cbd4e8e44cc42abe88e0, type: 3}
+    - emoji: {fileID: 1405008442520684, guid: ab9041fcf0d2ca5429b835df2786ef1e, type: 3}
+      audioClip: {fileID: 8300000, guid: 9427be6a2cf2cbd4e8e44cc42abe88e0, type: 3}
+    rewardData:
+      xp: 100
+      coins: 100

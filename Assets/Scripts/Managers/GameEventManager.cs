@@ -1,5 +1,6 @@
 using System;
 using Configs;
+using Data;
 using UnityEngine;
 
 namespace Managers
@@ -8,7 +9,7 @@ namespace Managers
     {
         // Event for when the player successfully jumps
         public static event Action OnSuccessfulJump;
-        public static event Action<VehicleDataRewardConfig> OnSuccessfulJumpWithVehicleRewardConfig;
+        public static event Action<VehicleRewardData> OnSuccessfulJumpWithVehicleRewardConfig;
         // Event for when the player fails to jump
         public static event Action OnFailedJump;
         // Event for when Streak is updated
@@ -23,11 +24,11 @@ namespace Managers
         public static event Action OnVehicleCollision;
 
 
-        public static void TriggerSuccessfulJump(VehicleDataRewardConfig vehicleRewardConfig)
+        public static void TriggerSuccessfulJump(VehicleRewardData vehicleReward)
         {
             Debug.Log("📢 Event Triggered: Successful Jump");
             OnSuccessfulJump?.Invoke();
-            OnSuccessfulJumpWithVehicleRewardConfig?.Invoke(vehicleRewardConfig);
+            OnSuccessfulJumpWithVehicleRewardConfig?.Invoke(vehicleReward);
         }
 
         public static void TriggerFailedJump()

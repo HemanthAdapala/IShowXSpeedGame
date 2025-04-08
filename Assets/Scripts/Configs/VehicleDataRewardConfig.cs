@@ -1,6 +1,5 @@
 using Data;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Configs
 {
