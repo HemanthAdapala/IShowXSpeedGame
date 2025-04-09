@@ -1,4 +1,5 @@
 using System.Collections;
+using Plugins;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,7 +9,10 @@ namespace Managers
     {
         protected int maxLives = 3; // Configurable number of lives
         protected int _currentLives; // Current lives
-        
+
+        //Testing for immediate game over
+        public bool makeGameOver = false; // Flag to prevent multiple game over triggers
+
 
         public int GetCurrentLives()
         {
@@ -23,6 +27,16 @@ namespace Managers
 
             // Subscribe to the player collision event
             GameEventManager.OnFailedJump += HandlePlayerCollision;
+        }
+
+        void Update()
+        {
+            // For testing purposes, trigger game over immediately
+            if (makeGameOver)
+            {
+                GameOver();
+                makeGameOver = false; // Reset the flag
+            }
         }
 
         void OnDisable()
@@ -56,7 +70,8 @@ namespace Managers
         private IEnumerator LoadGameOverScene()
         {
             yield return new WaitForSeconds(3f);
-            SceneManager.LoadScene(GameOverScene);
+            SceneLoader.LoadScene("GameOverScene", false);
+            SceneLoader.LoadScene("RewardsUIScene", true);
         }
     }
 }

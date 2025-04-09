@@ -6,8 +6,9 @@ using TMPro;
 using Managers;
 using Player;
 using Plugins;
+using UI;
 
-public class MainMenuUI : MonoBehaviour
+public class MainMenuUI : MonoBehaviour, IScreenBase
 {
     [Header("UI References")]
     [SerializeField] private Button playButton;
@@ -16,7 +17,9 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] private TMP_InputField nameInputField;
     [SerializeField] private Button submitNameButton;
     [SerializeField] private Button leaderboardButton;
-    [SerializeField] private Transform leaderboardPanel;
+    [SerializeField] private Button shopButton;
+    [SerializeField] private LeaderboardUI leaderboardPanel;
+    [SerializeField] private ShopUI shopUIPanel;
     
     
     [Header("Lobby UI References")]
@@ -34,7 +37,7 @@ public class MainMenuUI : MonoBehaviour
 
     private void Awake()
     {
-        if(leaderboardPanel.gameObject.activeInHierarchy)
+        if (leaderboardPanel.gameObject.activeInHierarchy)
         {
             leaderboardPanel.gameObject.SetActive(false);
         }
@@ -44,25 +47,27 @@ public class MainMenuUI : MonoBehaviour
     {
         playButton.onClick.AddListener(OnClickPlayButton);
         leaderboardButton.onClick.AddListener(OnClickLeaderboardButton);
+        shopButton.onClick.AddListener(OnClickShopButton);
         if (playerNameEnterPanel.activeInHierarchy)
         {
             playerNameEnterPanel.SetActive(false);
         }
     }
 
+    private void OnClickShopButton()
+    {
+        UIManager.Instance.NavigateTo(shopUIPanel);
+    }
+
     private void OnClickLeaderboardButton()
     {
-        if (!leaderboardPanel.gameObject.activeInHierarchy)
-        {
-            leaderboardPanel.gameObject.SetActive(true);
-            this.gameObject.SetActive(false);
-        }
-        
+        UIManager.Instance.NavigateTo(leaderboardPanel);
     }
 
     private void Start()
     {
         CheckPlayerData();
+        UIManager.Instance.NavigateTo(this);
     }
 
     private void CheckPlayerData()
@@ -148,4 +153,7 @@ public class MainMenuUI : MonoBehaviour
         playButton.onClick.RemoveListener(OnClickPlayButton);
         submitNameButton.onClick.RemoveListener(OnSubmitName);
     }
+
+    public void Show() => gameObject.SetActive(true);
+    public void Hide() => gameObject.SetActive(false);
 }

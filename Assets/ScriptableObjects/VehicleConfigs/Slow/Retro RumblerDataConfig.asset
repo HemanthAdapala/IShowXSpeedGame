@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Retro RumblerDataConfig
   m_EditorClassIdentifier: 
   vehicleData:
+    vehicleId: 3
     vehicleName: Retro Rumbler
     indicatorIcon: {fileID: 21300000, guid: 91e83d65d54b35d4b962982f0efd1659, type: 3}
     prefab: {fileID: 3017293098903430441, guid: 3f2ff9d13a285f547986635cadb5735d, type: 3}

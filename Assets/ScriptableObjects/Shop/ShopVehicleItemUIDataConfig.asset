@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e8c208eafe77d646ac9d02ec3400063, type: 3}
+  m_Name: ShopVehicleItemUIDataConfig
+  m_EditorClassIdentifier: 
+  VehicleUIItemDataList:
+  - vehicleId: 1
+    isPurchased: 1
+    isUnlocked: 1
+    VehicleImage: {fileID: 21300000, guid: 58734dd98ca2b50478c6e650a582a480, type: 3}
+    VehicleName: Pixel Prowler
+    VehiclePrice: 1000
+    UnlockAtLevel: 1
+  - vehicleId: 2
+    isPurchased: 0
+    isUnlocked: 0
+    VehicleImage: {fileID: 21300000, guid: 7dde3fe07ffdc6849a85229e8f08e07e, type: 3}
+    VehicleName: Neon Nightmare
+    VehiclePrice: 5000
+    UnlockAtLevel: 3
+  - vehicleId: 3
+    isPurchased: 0
+    isUnlocked: 0
+    VehicleImage: {fileID: 21300000, guid: 89ac3ebdbdad27f4db2096288f0326df, type: 3}
+    VehicleName: Retro Rumbler
+    VehiclePrice: 10000
+    UnlockAtLevel: 10

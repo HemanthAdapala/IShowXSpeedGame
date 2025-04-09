@@ -51,9 +51,11 @@ namespace Managers
 
         private void InitializeGame()
         {
+            var unlockedVehicleData = GameManager.Instance.GetBaseVehicleDataUI();
+            gameVehiclesConfig.BuildUnlockedVehiclesList(unlockedVehicleData);
             _currentSpawnInterval = gameConfig.initialSpawnInterval;
             _nextSpawnTime = Time.time + _currentSpawnInterval;
-            speedManager.Initialize(gameConfig);
+            //speedManager.Initialize(gameConfig);
         }
 
         private void Update()
@@ -68,8 +70,13 @@ namespace Managers
 
         private void SpawnVehicle()
         {
-            var vehicleData = gameVehiclesConfig.GetVehicleForCurrentGameState(GameSessionManager.Instance.GetCurrentStreak());
-            if (vehicleData == null) return;
+            var streak = GameSessionManager.Instance.GetCurrentStreak();
+            var vehicleData = gameVehiclesConfig.GetVehicleForCurrentGameState(streak);
+            var vehicleType = gameVehiclesConfig.GetVehicleType(vehicleData);
+            var (minSpeed, maxSpeed) = gameVehiclesConfig.GetSpeedRange(vehicleType);
+
+            // Initialize speed based on vehicle type
+            speedManager.Initialize(gameConfig, minSpeed, maxSpeed);
             GameObject vehiclePrefab = vehicleData.prefab;
 
             if (vehiclePrefab == null) return;

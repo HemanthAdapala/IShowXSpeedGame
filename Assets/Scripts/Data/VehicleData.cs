@@ -8,6 +8,7 @@ namespace Data
     [System.Serializable]
     public class VehicleData
     {
+        public int vehicleId;
         public string vehicleName;
         public Sprite indicatorIcon;
         public GameObject prefab;

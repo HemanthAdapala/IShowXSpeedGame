@@ -17,12 +17,15 @@ namespace UI
         [SerializeField] private TextMeshProUGUI levelUpText;
         [SerializeField] private LevelProgressionConfig levelProgressionConfig;
         [SerializeField] private Button continueButton;
+        [SerializeField] private TextMeshProUGUI rewardCoinsText;
 
         private PlayerData _playerData;
         private int _targetXP; // Total XP earned in session
         private int _remainingXP; // XP left to process
         private int _currentLevel;
         private bool _isAnimating = false;
+        private int _gameSessionEarnedCoins;
+        private int _playerCoins;
 
         private string _lobbyScene = "LobbyScene";
         private string _gameOverScene = "GameOverScene";
@@ -34,10 +37,33 @@ namespace UI
             _targetXP = GameManager.Instance.GetGameSessionData().SessionXp;
             _currentLevel = _playerData.level;
             _remainingXP = _targetXP;
+            _gameSessionEarnedCoins = GameManager.Instance.GetGameSessionData().SessionCoins;
+            _playerCoins = _playerData.coins;
+
 
             SetPrePlayerData();
             StartXPAnimation();
+            SetUpCoinsData();
         }
+
+        private void SetUpCoinsData()
+        {
+            var totalCoins = _playerCoins + _gameSessionEarnedCoins;
+            int displayedCoins = _playerCoins;
+
+            DOTween.To(() => displayedCoins, x => displayedCoins = x, totalCoins, 2f)
+                .SetEase(Ease.Linear)
+                .OnUpdate(() =>
+                {
+                    rewardCoinsText.text = $"+{displayedCoins}";
+                })
+                .OnComplete(() =>
+                {
+                    // Final set if needed
+                    rewardCoinsText.text = $"+{totalCoins}";
+                });
+        }
+
 
         private void OnClickContinueButton()
         {

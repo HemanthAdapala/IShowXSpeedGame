@@ -8,10 +8,9 @@ using UnityEngine.UI;
 
 namespace UI
 {
-    public class LeaderboardUI : MonoBehaviour
+    public class LeaderboardUI : MonoBehaviour, IScreenBase
     {
         [SerializeField] private Button backButton;
-        [SerializeField] private Button homeButton;
         [SerializeField] private LeaderboardItem leaderboardItemPrefab;
         [SerializeField] private LeaderboardItem playerStaticLeaderboardItemPrefab;
         [SerializeField] private Transform leaderboardContainer;
@@ -23,9 +22,16 @@ namespace UI
             LeaderboardManager.Instance.OnPlayerScoreUpdated += OnLeaderboardPlayerScoreUpdated;
             LeaderboardManager.Instance.OnLeaderboardUpdatedData += OnLeaderboardUpdatedData;
             backButton.onClick.AddListener(OnClickBackButton);
-            homeButton.onClick.AddListener(OnClickHomeButton);
             LeaderboardManager.Instance.GetPlayerScore();
             LeaderboardManager.Instance.GetScores();
+            ResetLeaderboardUI();
+        }
+
+        private void OnDisable()
+        {
+            backButton.onClick.RemoveListener(OnClickBackButton);
+            LeaderboardManager.Instance.OnPlayerScoreUpdated -= OnLeaderboardPlayerScoreUpdated;
+            LeaderboardManager.Instance.OnLeaderboardUpdatedData -= OnLeaderboardUpdatedData;
             ResetLeaderboardUI();
         }
 
@@ -72,35 +78,14 @@ namespace UI
 
         private void OnClickBackButton()
         {
-            Hide();
-            if (mainMenuUI != null)
-            {
-                this.gameObject.SetActive(false);
-                mainMenuUI.gameObject.SetActive(true);
-            }
+            UIManager.Instance.GoBack();
         }
 
-        private void OnClickHomeButton()
-        {
-            Hide();
-            if (mainMenuUI != null)
-            {
-                this.gameObject.SetActive(false);
-                mainMenuUI.gameObject.SetActive(true);
-            }
-        }
+        public void Show() => gameObject.SetActive(true);
 
-        private void Hide()
+        public void Hide()
         {
             this.gameObject.SetActive(false);
-            ResetLeaderboardUI();
-            LeaderboardManager.Instance.OnPlayerScoreUpdated -= OnLeaderboardPlayerScoreUpdated;
-            LeaderboardManager.Instance.OnLeaderboardUpdatedData -= OnLeaderboardUpdatedData;
-        }
-        
-        private void Show()
-        {
-            this.gameObject.SetActive(true);
         }
     }
 }

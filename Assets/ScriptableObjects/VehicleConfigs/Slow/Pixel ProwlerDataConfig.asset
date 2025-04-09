@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Pixel ProwlerDataConfig
   m_EditorClassIdentifier: 
   vehicleData:
+    vehicleId: 1
     vehicleName: Pixel Prowler
     indicatorIcon: {fileID: 21300000, guid: 91e83d65d54b35d4b962982f0efd1659, type: 3}
     prefab: {fileID: 2015208511302027660, guid: 0bb61515d97036a4ca7c80dcd4d9666c, type: 3}

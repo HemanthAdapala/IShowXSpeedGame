@@ -23,5 +23,15 @@ namespace Managers
                 Destroy(gameObject);
             }
         }
+
+        private void Start()
+        {
+            GameManager.Instance.OnPlayerDataCoinsUpdatedEvent += UpdateCoins;
+        }
+
+        private void UpdateCoins(int coins)
+        {
+            rewardsUI.UpdateCoinsData(coins);
+        }
     }
 }

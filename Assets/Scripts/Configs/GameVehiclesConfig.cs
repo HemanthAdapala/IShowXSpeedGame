@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Data;
 using UnityEngine;
@@ -12,16 +12,16 @@ namespace Configs
 
         private List<VehicleData> allVehicles; // This can be used for quick access to all vehicles if needed
 
-        //Save all vehicle data in a list
-        private void Awake()
-        {
-            //Cache all vehicle data in a list
-            allVehicles = new List<VehicleData>();
-            foreach (var raw in vehicleRawData)
-            {
-                allVehicles.AddRange(raw.vehicleDataConfigs.Select(config => config.vehicleData));
-            }
-        }
+        ////Save all vehicle data in a list
+        //private void Awake()
+        //{
+        //    //Cache all vehicle data in a list
+        //    allVehicles = new List<VehicleData>();
+        //    foreach (var raw in vehicleRawData)
+        //    {
+        //        allVehicles.AddRange(raw.vehicleDataConfigs.Select(config => config.vehicleData));
+        //    }
+        //}
 
         public VehicleData GetVehicleForCurrentGameState(int currentStreak)
         {
@@ -46,6 +46,24 @@ namespace Configs
                 randomPoint -= availableVehicles[i].spawnWeight;
             }
             return availableVehicles[0];
+        }
+
+        public void BuildUnlockedVehiclesList(List<BaseVehicleDataUI> unlockedData)
+        {
+            allVehicles = new List<VehicleData>();
+
+            foreach (var raw in vehicleRawData)
+            {
+                foreach (var config in raw.vehicleDataConfigs)
+                {
+                    if (unlockedData.Exists(v => v.vehicleId == config.vehicleData.vehicleId && v.isUnlocked))
+                    {
+                        allVehicles.Add(config.vehicleData);
+                    }
+                }
+            }
+
+            Debug.Log($" Loaded {allVehicles.Count} unlocked vehicles into GameVehiclesConfig.");
         }
 
         public VehicleType GetVehicleType(VehicleData vehicleData)
